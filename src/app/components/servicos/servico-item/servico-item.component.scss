@@ -1,0 +1,141 @@
+/* Cartão em pílula: sem filete, o fundo arredondado é o que separa um serviço do outro */
+
+.app-servico-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+
+    padding: var(--spacing-lg) var(--spacing-2xl);
+
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-xl);
+
+    transition: background-color var(--animation-fast), transform var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        transform: scale(1.01);
+        transform-origin: center;
+    }
+}
+
+/* Campos rotulados, alinhados em colunas entre as pílulas da lista */
+
+.app-servico-item__campos {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin: 0;
+}
+
+.app-servico-item__campo {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-xs);
+    min-width: 0;
+}
+
+.app-servico-item__rotulo {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.app-servico-item__valor {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.app-servico-item__campo--destaque .app-servico-item__valor {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+/* Ação de edição: discreta em repouso, alcançada pelo mesmo fundo dos demais itens */
+
+.app-servico-item__editar {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Ação destrutiva: círculo discreto em repouso, preenchido apenas quando alcançado */
+
+.app-servico-item__excluir {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--danger-surface);
+        color: var(--danger-hover);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Abaixo de 48rem os campos viram duas colunas e o destaque ocupa a linha inteira */
+
+@media (max-width: 48rem) {
+    .app-servico-item__campos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .app-servico-item__campo--destaque {
+        grid-column: 1 / -1;
+    }
+}

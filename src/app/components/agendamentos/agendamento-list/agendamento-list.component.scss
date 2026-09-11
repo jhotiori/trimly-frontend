@@ -1,0 +1,57 @@
+/* Seção da lista, sem cartão e sem filete: o título e o respiro bastam como moldura */
+
+.app-agendamento-list {
+    display: flex;
+    flex-flow: column;
+}
+
+.app-agendamento-list__cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-lg);
+
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.app-agendamento-list__titulo {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-semibold);
+}
+
+.app-agendamento-list__contagem {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.05em;
+
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-full);
+    background-color: var(--bg-surface);
+    color: var(--text-muted);
+}
+
+/* As pílulas se separam por espaçamento, nunca por divisória */
+
+.app-agendamento-list__itens {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-md);
+}
+
+/* Estado vazio: um bloco preenchido e discreto, nunca uma área em branco */
+
+.app-agendamento-list__vazio {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    padding: var(--spacing-3xl);
+
+    background-color: var(--bg-subtle);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-faint);
+
+    i {
+        font-size: var(--font-size-lg);
+    }
+}

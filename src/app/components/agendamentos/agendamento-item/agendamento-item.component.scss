@@ -1,0 +1,211 @@
+/*
+    Cartão do agendamento: exceção deliberada ao reset sem molduras do sistema de design.
+    O filete fino e o raio menor distinguem este cartão da pílula do serviço, então não
+    devem ser "corrigidos" de volta para a versão sem borda.
+*/
+
+.app-agendamento-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+
+    padding: var(--spacing-lg) var(--spacing-2xl);
+
+    background-color: var(--bg-surface);
+    border: var(--border-width-xs) solid var(--border-base);
+    border-radius: var(--border-radius-lg);
+
+    transition: background-color var(--animation-fast), border-color var(--animation-fast),
+        transform var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--border-hover);
+        transform: scale(1.01);
+        transform-origin: center;
+    }
+}
+
+/* Duas linhas empilhadas: cliente e horário acima, serviço e duração abaixo */
+
+.app-agendamento-item__conteudo {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-sm);
+}
+
+.app-agendamento-item__linha-superior,
+.app-agendamento-item__linha-inferior {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-lg);
+    min-width: 0;
+}
+
+.app-agendamento-item__cliente {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.app-agendamento-item__servico {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.app-agendamento-item__data,
+.app-agendamento-item__duracao {
+    flex: none;
+    font-size: var(--font-size-xs);
+    color: var(--text-faint);
+}
+
+/* Ação de edição: discreta em repouso, alcançada pelo mesmo fundo dos demais itens */
+
+.app-agendamento-item__editar {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Ação destrutiva: círculo discreto em repouso, preenchido apenas quando alcançado */
+
+.app-agendamento-item__excluir {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--danger-surface);
+        color: var(--danger-hover);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Menu compacto do cliente: um alternador e as opções ancoradas abaixo dele */
+
+.app-agendamento-item__acoes {
+    flex: none;
+    position: relative;
+}
+
+.app-agendamento-item__menu {
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+.app-agendamento-item__menu-opcoes {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--spacing-md));
+    z-index: 1;
+
+    display: flex;
+    flex-flow: column;
+
+    padding: var(--spacing-sm);
+
+    background-color: var(--bg-elevated);
+    border-radius: var(--border-radius-md);
+}
+
+.app-agendamento-item__menu-opcao {
+    padding: var(--spacing-md) var(--spacing-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+    text-align: left;
+    white-space: nowrap;
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}

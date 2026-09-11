@@ -1,0 +1,60 @@
+/* Conteúdo do painel, respirando dentro de uma coluna de leitura */
+
+.app-dashboard {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-3xl);
+
+    max-width: 68rem;
+    margin: 0 auto;
+}
+
+/* Saudação: a face de display e o acento aparecem só aqui, no ponto mais alto da página */
+
+.app-dashboard__cabecalho {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-md);
+}
+
+.app-dashboard__saudacao {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+}
+
+.app-dashboard__usuario {
+    color: var(--accent-hover);
+}
+
+.app-dashboard__icone {
+    font-size: var(--font-size-xl);
+    color: var(--text-muted);
+    vertical-align: middle;
+}
+
+.app-dashboard__subtitulo {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+}
+
+/* As seções empilham por padrão e só ganham a segunda coluna a partir de 64rem */
+
+.app-dashboard__secoes {
+    display: grid;
+    gap: var(--spacing-3xl);
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 64rem) {
+    .app-dashboard__secoes {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 48rem) {
+    .app-dashboard__saudacao {
+        font-size: var(--font-size-xl);
+    }
+}

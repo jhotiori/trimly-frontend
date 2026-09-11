@@ -1,0 +1,68 @@
+<aside [class.app-sidebar--recolhida]="collapsed()" class="app-sidebar" >
+    <div class="app-sidebar__marca">
+        <img alt="" class="app-sidebar__simbolo" src="/icons/scissor.svg" />
+        <span class="app-sidebar__logotipo">Trimly</span>
+    </div>
+
+    <nav class="app-sidebar__nav">
+        <ul class="app-sidebar__itens">
+            <li>
+                <a
+                    class="app-sidebar__item"
+                    routerLink="/dashboard/view"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Dashboard">
+                    <i aria-hidden="true" class="ti ti-home"></i>
+                    <span class="app-sidebar__rotulo">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <button
+                    (click)="openAgendamentoForm()"
+                    class="app-sidebar__item"
+                    title="Novo agendamento"
+                    type="button">
+                    <i aria-hidden="true" class="ti ti-calendar-plus"></i>
+                    <span class="app-sidebar__rotulo">Agendamentos</span>
+                </button>
+            </li>
+            @if (authStore.ehGestor()) {
+                <li>
+                    <button (click)="openServicoForm()" class="app-sidebar__item" title="Novo serviço" type="button">
+                        <i aria-hidden="true" class="ti ti-razor-electric"></i>
+                        <span class="app-sidebar__rotulo">Serviços</span>
+                    </button>
+                </li>
+                <li>
+                    <button
+                        (click)="openDisponibilidadeForm()"
+                        class="app-sidebar__item"
+                        title="Nova disponibilidade"
+                        type="button">
+                        <i aria-hidden="true" class="ti ti-calendar-time"></i>
+                        <span class="app-sidebar__rotulo">Disponibilidades</span>
+                    </button>
+                </li>
+            }
+            <li>
+                <a
+                    class="app-sidebar__item"
+                    routerLink="/dashboard/configuracoes"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Configurações">
+                    <i aria-hidden="true" class="ti ti-settings"></i>
+                    <span class="app-sidebar__rotulo">Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <button
+        (click)="toggle()"
+        [attr.aria-expanded]="!collapsed()"
+        aria-label="Recolher ou expandir a barra lateral"
+        class="app-sidebar__alternar"
+        type="button">
+        <i [class.ti-chevron-left]="!collapsed()" [class.ti-chevron-right]="collapsed()" aria-hidden="true" class="ti" ></i>
+    </button>
+</aside>

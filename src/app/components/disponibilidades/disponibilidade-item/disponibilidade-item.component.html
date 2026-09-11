@@ -1,0 +1,22 @@
+<article class="app-disponibilidade-item">
+    <dl class="app-disponibilidade-item__campos">
+        <div class="app-disponibilidade-item__campo app-disponibilidade-item__campo--destaque">
+            <dt class="app-disponibilidade-item__rotulo">Dia</dt>
+            <dd class="app-disponibilidade-item__valor">{{ disponibilidade.diaSemana }}</dd>
+        </div>
+        <div class="app-disponibilidade-item__campo">
+            <dt class="app-disponibilidade-item__rotulo">Janela</dt>
+            <dd class="app-disponibilidade-item__valor">
+                {{ formatHora(disponibilidade.horaInicio) }} às {{ formatHora(disponibilidade.horaFim) }}
+            </dd>
+        </div>
+    </dl>
+
+    <button
+        (click)="remove()"
+        aria-label="Excluir disponibilidade"
+        class="app-disponibilidade-item__excluir"
+        type="button">
+        <i aria-hidden="true" class="ti ti-trash"></i>
+    </button>
+</article>

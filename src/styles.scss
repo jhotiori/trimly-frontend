@@ -1,0 +1,443 @@
+/*
+    Sistema de design global do Trimly.
+    Fonte única de tokens, padrões de elementos e vocabulário de animação.
+    @author jhotiori
+*/
+
+:root {
+    /* Famílias tipográficas */
+    --font-family-display: "Fraunces", "Georgia", serif;
+    --font-family-interface: "Inter", "Segoe UI", sans-serif;
+    --font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    /* Pesos tipográficos */
+    --font-weight-bold: 800;
+    --font-weight-semibold: 600;
+    --font-weight-normal: 400;
+    --font-weight-thin: 300;
+
+    /* Escala de tamanhos */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 1rem;
+    --font-size-md: 1.25rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 2rem;
+    --font-size-2xl: 2.5rem;
+    --font-size-3xl: 3rem;
+
+    /* Vocabulário de animação */
+    --animation-ease-style: ease-out;
+    --animation-duration-instant: 60ms;
+    --animation-duration-fast: 120ms;
+    --animation-duration-medium: 250ms;
+    --animation-duration-slow: 400ms;
+
+    --animation-instant: var(--animation-ease-style) var(--animation-duration-instant);
+    --animation-fast: var(--animation-ease-style) var(--animation-duration-fast);
+    --animation-medium: var(--animation-ease-style) var(--animation-duration-medium);
+    --animation-slow: var(--animation-ease-style) var(--animation-duration-slow);
+
+    /* Texto */
+    --text-primary: hsl(0 0 90%);
+    --text-secondary: color-mix(in srgb, var(--text-primary), var(--bg-base) 15%);
+    --text-tertiary: color-mix(in srgb, var(--text-primary), var(--bg-base) 30%);
+
+    --text-muted: color-mix(in srgb, var(--text-primary), var(--bg-base) 45%);
+    --text-faint: color-mix(in srgb, var(--text-primary), var(--bg-base) 60%);
+
+    /* Acento */
+    --accent-base: hsl(0 60% 40%);
+    --accent-surface: color-mix(in srgb, var(--accent-base), var(--text-primary) 8%);
+    --accent-elevated: color-mix(in srgb, var(--accent-base), var(--text-primary) 16%);
+    --accent-hover: color-mix(in srgb, var(--accent-base), var(--text-primary) 24%);
+
+    /* Ações destrutivas: vermelho escuro e dessaturado, distinto do acento */
+    --danger-base: hsl(356 34% 38%);
+    --danger-hover: color-mix(in srgb, var(--danger-base), var(--text-primary) 20%);
+    --danger-surface: color-mix(in srgb, var(--danger-base), var(--bg-base) 72%);
+
+    /* Fundo */
+    --bg-base: hsl(0 0 0%);
+    --bg-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 17%);
+    --bg-highlight: color-mix(in srgb, var(--bg-base), var(--text-primary) 23%);
+
+    --bg-subtle: color-mix(in srgb, var(--bg-base), var(--text-primary) 5%);
+    --bg-surface: color-mix(in srgb, var(--bg-base), var(--text-primary) 8%);
+    --bg-elevated: color-mix(in srgb, var(--bg-base), var(--text-primary) 11%);
+
+    /* Bordas */
+    --border-base: color-mix(in srgb, var(--bg-base), var(--text-primary) 20%);
+    --border-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 30%);
+
+    /* Espaçamento */
+    --spacing-xs: 0.125rem;
+    --spacing-sm: 0.25rem;
+    --spacing-md: 0.5rem;
+    --spacing-lg: 0.75rem;
+    --spacing-xl: 1rem;
+    --spacing-2xl: 1.5rem;
+    --spacing-3xl: 2rem;
+
+    --border-width-xs: 0.0625rem;
+    --border-width-sm: 0.1rem;
+    --border-width-md: 0.2rem;
+    --border-width-lg: 0.5rem;
+
+    --border-radius-sm: 0.125rem;
+    --border-radius-md: 0.25rem;
+    --border-radius-lg: 0.5rem;
+    --border-radius-xl: 1rem;
+    --border-radius-full: 999rem;
+
+    --opacity-visible: 1;
+    --opacity-disabled: 0.5;
+    --opacity-hidden: 0;
+}
+
+/* Padrões globais de elementos */
+
+* {
+    box-sizing: border-box;
+}
+
+/*
+    Reset sem molduras: a interface é plana por padrão.
+    A única exceção é `:focus-visible`, que tem especificidade maior e volta a desenhar
+    o contorno do teclado; a outra linha visível da aplicação é o sublinhado dos campos.
+*/
+
+*,
+*::before,
+*::after {
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+
+    font-family: var(--font-family-interface);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+    text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote {
+    margin: 0;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: var(--opacity-disabled);
+    }
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Foco visível pelo teclado, no lugar do antigo `outline: none` global */
+
+:focus-visible {
+    outline: var(--border-width-sm) solid var(--accent-hover);
+    outline-offset: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+}
+
+/* Remove sombras decorativas apenas nos elementos da aplicação, preservando o MDB */
+
+[class^="app-"],
+[class*=" app-"] {
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* Títulos: h1-h4 na face de display (Fraunces), h5-h6 e parágrafo na de interface (Inter) */
+
+h1 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+h2 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+}
+
+h3 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+h4 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    letter-spacing: 0;
+    line-height: 1.25;
+}
+
+h5 {
+    font-family: var(--font-family-interface);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-tertiary);
+    letter-spacing: 0;
+    line-height: 1.3;
+}
+
+h6 {
+    font-family: var(--font-family-interface);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+}
+
+p {
+    font-family: var(--font-family-interface);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Modais e formulários do MDB adaptados aos tokens, mantendo o DOM e o layout originais */
+
+/*
+    O MDB reafirma moldura e sombra com especificidade maior que o reset universal, então
+    a superfície e as divisórias do modal são zeradas aqui explicitamente.
+*/
+
+.modal-content {
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-lg);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+.modal-header,
+.modal-footer {
+    border: 0;
+}
+
+/*
+    O SweetAlert2 renderiza no `body`, fora do encapsulamento de qualquer componente, então
+    o tema dos diálogos mora aqui junto ao do modal do MDB. As cores vêm do `Swal.mixin`.
+*/
+
+/*
+    O overlay do CDK que hospeda o modal do MDB fica em z-index 1200 e o SweetAlert2 em
+    1060, então sem isto o diálogo aparece atrás do modal e o modal engole os cliques.
+    Nenhum token cobre z-index; o valor só precisa superar o overlay do CDK.
+*/
+
+.swal2-container {
+    z-index: 1300;
+}
+
+.app-alert {
+    border-radius: var(--border-radius-lg);
+    font-family: var(--font-family-interface);
+}
+
+.app-alert__titulo {
+    font-family: var(--font-family-display);
+}
+
+.app-alert__botao {
+    border-radius: var(--border-radius-md);
+    transition: background-color var(--animation-fast);
+}
+
+/* Campo preenchido e sem moldura: o entalhe do MDB sai e um único sublinhado assume */
+
+.form-outline .form-control ~ .form-notch {
+    display: none;
+}
+
+.form-outline {
+    position: relative;
+}
+
+.form-outline .form-control {
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
+
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    padding: var(--spacing-lg) var(--spacing-xl);
+
+    transition: background-color var(--animation-fast);
+
+    &:hover,
+    &:focus {
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    &:disabled {
+        background-color: var(--bg-subtle);
+        opacity: var(--opacity-disabled);
+    }
+}
+
+/* Sublinhado animado: repouso, foco e inválido, este último independente do foco */
+
+.form-outline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: var(--border-width-sm);
+    background-color: var(--border-base);
+
+    transition: background-color var(--animation-fast), height var(--animation-fast);
+}
+
+.form-outline:hover::after {
+    background-color: var(--border-hover);
+}
+
+.form-outline:focus-within::after {
+    background-color: var(--accent-hover);
+    height: var(--border-width-md);
+}
+
+.form-outline:has(.form-control.is-invalid)::after {
+    background-color: var(--danger-base);
+    height: var(--border-width-md);
+}
+
+/*
+    Rótulo flutuante: o transform do MDB é preservado, só o recuo sai e o `top` sobe o
+    suficiente para o rótulo não encostar no texto do campo preenchido.
+*/
+
+.form-outline .form-control ~ .form-label {
+    font-family: var(--font-family-sans);
+    color: var(--text-muted);
+
+    padding: 0;
+    top: var(--spacing-lg);
+
+    transition: color var(--animation-fast);
+}
+
+.form-outline .form-control:focus ~ .form-label {
+    color: var(--accent-hover);
+}
+
+.form-outline .form-control.is-invalid ~ .form-label {
+    color: var(--danger-hover);
+}
+
+/* Utilitários compartilhados */
+
+.app-btn {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-md);
+    color: var(--text-tertiary);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+/* Ação principal dos formulários de autenticação, idêntica no login e no registro */
+
+.app-auth__enviar {
+    width: 100%;
+    padding: var(--spacing-lg);
+
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+
+    background-color: var(--accent-surface);
+    color: var(--text-primary);
+    border-radius: var(--border-radius-md);
+
+    transition: background-color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--accent-hover);
+    }
+}
+
+.font-sm {
+    font-size: var(--font-size-sm);
+}
+
+.font-md {
+    font-size: var(--font-size-md);
+}
+
+.font-lg {
+    font-size: var(--font-size-lg);
+}

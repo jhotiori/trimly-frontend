@@ -1,0 +1,23 @@
+<div class="app-auth__cartao">
+    <h2 class="app-auth__titulo">{{ mode() === "login" ? "Login" : "Registrar" }}</h2>
+
+    <div class="app-auth__formulario">
+        @if (mode() === "login") {
+            <app-login-form />
+        } @else {
+            <app-registrar-form />
+        }
+    </div>
+
+    @if (mode() === "login") {
+        <p class="app-auth__alternar">
+            Não tem uma conta?
+            <button (click)="toggle()" type="button">Registre-se</button>
+        </p>
+    } @else {
+        <p class="app-auth__alternar">
+            Já possuí uma conta?
+            <button (click)="toggle()" type="button">Faça o login.</button>
+        </p>
+    }
+</div>

@@ -1,0 +1,24 @@
+/*
+    Casca do painel: a largura da própria barra lateral define a primeira coluna, por isso
+    a grade não anima `grid-template-columns`.
+*/
+
+.app-dashboard-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    min-height: 100vh;
+
+    background-color: var(--bg-base);
+}
+
+.app-dashboard-layout__conteudo {
+    min-width: 0;
+    overflow-y: auto;
+    padding: var(--spacing-3xl);
+}
+
+@media (max-width: 48rem) {
+    .app-dashboard-layout__conteudo {
+        padding: var(--spacing-xl);
+    }
+}
