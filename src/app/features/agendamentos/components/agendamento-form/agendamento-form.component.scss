@@ -1,0 +1,120 @@
+/* Cabeçalho do modal: título na face de display e um fechar discreto */
+
+.app-agendamento-form__titulo {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-semibold);
+}
+
+.app-agendamento-form__fechar {
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+/* Corpo do formulário */
+
+.app-agendamento-form__corpo {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-2xl);
+}
+
+.app-agendamento-form__linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+.app-agendamento-form__campo {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-md);
+}
+
+.app-agendamento-form__rotulo {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+}
+
+/* Seleção nativa preenchida, no mesmo idioma dos campos do MDB */
+
+.app-agendamento-form__select {
+    padding: var(--spacing-lg) var(--spacing-xl);
+
+    background-color: var(--bg-subtle);
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    color: var(--text-primary);
+
+    transition: background-color var(--animation-fast);
+
+    &:hover,
+    &:focus {
+        background-color: var(--bg-surface);
+    }
+
+    option {
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+    }
+}
+
+.app-agendamento-form__select--invalido {
+    background-color: var(--danger-surface);
+
+    &:hover,
+    &:focus {
+        background-color: var(--danger-surface);
+    }
+}
+
+/* Estado de validação do envio */
+
+.app-agendamento-form__erro {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    font-size: var(--font-size-xs);
+    color: var(--danger-hover);
+}
+
+/* Ações do rodapé: sem moldura, o preenchimento distingue a ação principal */
+
+.app-agendamento-form__acao {
+    font-weight: var(--font-weight-semibold);
+    padding: var(--spacing-md) var(--spacing-2xl);
+
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+.app-agendamento-form__acao--principal {
+    background-color: var(--accent-base);
+    color: var(--text-primary);
+
+    &:hover {
+        background-color: var(--accent-hover);
+    }
+}

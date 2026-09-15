@@ -1,0 +1,31 @@
+<section class="app-tela">
+    <header class="app-tela__cabecalho">
+        <h1 class="app-tela__titulo">Serviços</h1>
+        <p class="app-tela__descricao">Os serviços da barbearia, com preço e duração.</p>
+    </header>
+
+    <search class="app-tela__ferramentas">
+        <div class="app-busca">
+            <i aria-hidden="true" class="ti ti-search"></i>
+            <input
+                [formControl]="busca"
+                aria-label="Pesquisar serviços pelo nome"
+                class="app-busca__entrada"
+                placeholder="Pesquisar..."
+                type="search" />
+        </div>
+
+        @if (authStore.isGestor()) {
+            <button
+                (click)="openServicoForm()"
+                aria-label="Novo serviço"
+                class="app-tela__criar"
+                title="Novo serviço"
+                type="button">
+                <i aria-hidden="true" class="ti ti-plus"></i>
+            </button>
+        }
+    </search>
+
+    <app-servico-list [servicos]="servicosFiltrados()" />
+</section>

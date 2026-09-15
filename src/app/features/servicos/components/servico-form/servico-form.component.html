@@ -1,0 +1,72 @@
+<div class="modal-header app-servico-form__cabecalho">
+    <h5 class="modal-title app-servico-form__titulo">{{ isEditing ? "Editar serviço" : "Novo serviço" }}</h5>
+    <button (click)="close()" aria-label="Fechar" class="app-servico-form__fechar" type="button">
+        <i aria-hidden="true" class="ti ti-x"></i>
+    </button>
+</div>
+
+<form (ngSubmit)="submit()" [formGroup]="form">
+    <div class="modal-body app-servico-form__corpo">
+        <mdb-form-control>
+            <input
+                [class.is-invalid]="isInvalid('nome')"
+                class="form-control"
+                formControlName="nome"
+                id="servico-nome"
+                mdbInput
+                type="text" />
+            <label class="form-label" for="servico-nome" mdbLabel>Nome</label>
+        </mdb-form-control>
+
+        <div class="app-servico-form__linha">
+            <mdb-form-control>
+                <input
+                    [class.is-invalid]="isInvalid('valor')"
+                    class="form-control"
+                    formControlName="valor"
+                    id="servico-valor"
+                    mdbInput
+                    min="1"
+                    type="number" />
+                <label class="form-label" for="servico-valor" mdbLabel>Valor (R$)</label>
+            </mdb-form-control>
+
+            <mdb-form-control>
+                <input
+                    [class.is-invalid]="isInvalid('duracao')"
+                    class="form-control"
+                    formControlName="duracao"
+                    id="servico-duracao"
+                    mdbInput
+                    min="1"
+                    type="number" />
+                <label class="form-label" for="servico-duracao" mdbLabel>Duração (min)</label>
+            </mdb-form-control>
+        </div>
+
+        @if (isEditing) {
+            <div class="app-servico-form__campo">
+                <label class="app-servico-form__rotulo" for="servico-status">Status</label>
+                <select class="app-servico-form__select" formControlName="status" id="servico-status">
+                    @for (status of statusDisponiveis; track status) {
+                        <option [ngValue]="status">{{ status | enumLabel }}</option>
+                    }
+                </select>
+            </div>
+        }
+
+        @if (submitted() && form.invalid) {
+            <p class="app-servico-form__erro">
+                <i aria-hidden="true" class="ti ti-alert-triangle"></i>
+                Preencha todos os campos para cadastrar o serviço.
+            </p>
+        }
+    </div>
+
+    <div class="modal-footer app-servico-form__rodape">
+        <button (click)="close()" class="app-servico-form__acao" type="button">Cancelar</button>
+        <button class="app-servico-form__acao app-servico-form__acao--principal" type="submit">
+            {{ isEditing ? "Salvar" : "Cadastrar" }}
+        </button>
+    </div>
+</form>

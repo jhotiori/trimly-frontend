@@ -1,12 +1,11 @@
 import type { Routes } from "@angular/router";
-import { AuthComponent } from "./components/auth/auth.component";
-import { ConfiguracoesComponent } from "./components/configuracoes/configuracoes.component";
-import { DashboardComponent } from "./components/dashboard/dashboard.component";
-import { UsuariosComponent } from "./components/usuarios/usuarios.component";
-import { authGuard } from "./guards/auth.guard";
-import { roleGuard } from "./guards/role.guard";
-import { UsuarioCargo } from "./models/usuario/usuario-cargo.enum";
-import { DashboardLayoutComponent } from "./shared/layout/dashboard-layout/dashboard-layout.component";
+import { authGuard } from "./core/guards/auth.guard";
+import { DashboardLayoutComponent } from "./core/layout/dashboard-layout/dashboard-layout.component";
+import { AgendamentoScreenComponent } from "./features/agendamentos/components/agendamento-screen/agendamento-screen.component";
+import { AuthComponent } from "./features/auth/components/auth.component";
+import { ConfiguracoesComponent } from "./features/configuracoes/configuracoes.component";
+import { DashboardComponent } from "./features/dashboard/dashboard.component";
+import { ServicoScreenComponent } from "./features/servicos/components/servico-screen/servico-screen.component";
 
 export const routes: Routes = [
     {
@@ -23,10 +22,6 @@ export const routes: Routes = [
         component: DashboardLayoutComponent,
         canActivate: [authGuard],
         children: [
-            /*{
-                path: "admin",
-                component: class {},
-            },*/
             {
                 path: "",
                 redirectTo: "view",
@@ -37,9 +32,12 @@ export const routes: Routes = [
                 component: DashboardComponent,
             },
             {
-                path: "usuarios",
-                component: UsuariosComponent,
-                canActivate: [roleGuard(UsuarioCargo.ADMIN, UsuarioCargo.DONO)],
+                path: "agendamentos",
+                component: AgendamentoScreenComponent,
+            },
+            {
+                path: "servicos",
+                component: ServicoScreenComponent,
             },
             {
                 path: "configuracoes",

@@ -1,0 +1,195 @@
+/*
+    Vocabulário semântico compartilhado com o restante da aplicação:
+    - superfície interativa em hover: `--bg-hover`;
+    - navegação ativa: texto em `--accent-hover`;
+    - transições de estado (hover, cor, ícone): `--animation-fast`;
+    - transições de layout, tamanho e largura: `--animation-medium`;
+    - `--animation-instant` fica reservado para retorno de clique ou toque, hoje sem uso.
+*/
+
+/* Barra lateral sem moldura: o fundo mais claro é a única costura contra o conteúdo */
+
+.app-sidebar {
+    flex: none;
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-3xl);
+
+    width: 15rem;
+    height: 100vh;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+
+    background-color: var(--bg-subtle);
+    overflow: hidden;
+
+    transition: width var(--animation-medium);
+}
+
+.app-sidebar--recolhida {
+    width: 4.5rem;
+}
+
+/* Marca */
+
+.app-sidebar__marca {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: 0 var(--spacing-md);
+}
+
+.app-sidebar__simbolo {
+    flex: none;
+    width: var(--font-size-lg);
+    height: var(--font-size-lg);
+}
+
+.app-sidebar__logotipo {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+/* Navegação */
+
+.app-sidebar__nav {
+    flex: 1 1 auto;
+}
+
+.app-sidebar__itens {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-sm);
+}
+
+.app-sidebar__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+
+    padding: var(--spacing-lg) var(--spacing-md);
+
+    background-color: transparent;
+    border-left: var(--border-width-md) solid transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-tertiary);
+    text-align: left;
+
+    transition: background-color var(--animation-fast), border-color var(--animation-fast),
+        color var(--animation-fast);
+
+    i {
+        flex: none;
+        width: var(--font-size-md);
+        font-size: var(--font-size-md);
+        line-height: 1;
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover {
+        background-color: var(--bg-hover);
+        border-left-color: var(--border-hover);
+        color: var(--text-primary);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.app-sidebar__rotulo {
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+}
+
+/*
+    Rota atual: o acento aparece no texto e na borda esquerda. A borda existe transparente
+    em repouso, então só a cor muda e nenhuma entrada desloca o layout ao ser alcançada.
+*/
+
+.app-sidebar__item--ativo {
+    border-left-color: var(--accent-hover);
+    color: var(--accent-hover);
+
+    &:hover {
+        border-left-color: var(--accent-hover);
+        color: var(--accent-hover);
+    }
+}
+
+/* Alternador de recolhimento */
+
+.app-sidebar__alternar {
+    align-self: flex-end;
+
+    display: grid;
+    place-items: center;
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-md);
+        transform: scale(1);
+        transition: transform var(--animation-fast);
+    }
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Recolhida: só os ícones permanecem */
+
+.app-sidebar--recolhida {
+    .app-sidebar__logotipo,
+    .app-sidebar__rotulo {
+        display: none;
+    }
+
+    .app-sidebar__marca,
+    .app-sidebar__item {
+        justify-content: center;
+    }
+
+    .app-sidebar__alternar {
+        align-self: center;
+    }
+}
+
+/* Abaixo de 48rem a barra trava como trilho de ícones, independente do sinal de recolhimento */
+
+@media (max-width: 48rem) {
+    .app-sidebar {
+        width: 4.5rem;
+    }
+
+    .app-sidebar__logotipo,
+    .app-sidebar__rotulo {
+        display: none;
+    }
+
+    .app-sidebar__marca,
+    .app-sidebar__item {
+        justify-content: center;
+    }
+
+    .app-sidebar__alternar {
+        display: none;
+    }
+}

@@ -1,0 +1,14 @@
+@if (agendamentos.length > 0) {
+    <ul class="app-grade">
+        @for (agendamento of agendamentos; track agendamento.id) {
+            <li>
+                <app-agendamento-item [agendamento]="agendamento" />
+            </li>
+        }
+    </ul>
+} @else {
+    <p class="app-vazio">
+        <i aria-hidden="true" class="ti ti-calendar-off"></i>
+        Nenhum agendamento por aqui ainda.
+    </p>
+}

@@ -1,0 +1,34 @@
+<section class="app-tela">
+    <header class="app-tela__cabecalho">
+        <h1 class="app-tela__titulo">Agendamentos</h1>
+        <p class="app-tela__descricao">Consulte e ajuste os horários marcados.</p>
+    </header>
+
+    <search class="app-tela__ferramentas">
+        <div class="app-busca">
+            <i aria-hidden="true" class="ti ti-search"></i>
+            <input
+                [formControl]="busca"
+                aria-label="Pesquisar agendamentos"
+                class="app-busca__entrada"
+                placeholder="Pesquisar..."
+                type="search" />
+            <select [formControl]="campo" aria-label="Pesquisar por" class="app-busca__filtro">
+                @for (opcao of opcoesBusca(); track opcao.campo) {
+                    <option [ngValue]="opcao.campo">{{ opcao.rotulo }}</option>
+                }
+            </select>
+        </div>
+
+        <button
+            (click)="openAgendamentoForm()"
+            aria-label="Novo agendamento"
+            class="app-tela__criar"
+            title="Novo agendamento"
+            type="button">
+            <i aria-hidden="true" class="ti ti-calendar-plus"></i>
+        </button>
+    </search>
+
+    <app-agendamento-list [agendamentos]="agendamentosFiltrados()" />
+</section>

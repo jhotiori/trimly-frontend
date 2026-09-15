@@ -5,10 +5,13 @@
 */
 
 :root {
-    /* Famílias tipográficas */
-    --font-family-display: "Fraunces", "Georgia", serif;
+    /*
+        Famílias tipográficas: display (Geist) nos títulos h2-h4, interface (Inter) no texto
+        corrido e na UI, mono (Geist Mono) nos campos dos formulários do MDB.
+    */
+    --font-family-display: "Geist", "Inter", sans-serif;
     --font-family-interface: "Inter", "Segoe UI", sans-serif;
-    --font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-family-mono: "Geist Mono", "SFMono-Regular", Consolas, monospace;
 
     /* Pesos tipográficos */
     --font-weight-bold: 800;
@@ -25,8 +28,8 @@
     --font-size-2xl: 2.5rem;
     --font-size-3xl: 3rem;
 
-    /* Vocabulário de animação */
-    --animation-ease-style: ease-out;
+    /* Vocabulário de animação: curva expo-out, arranque rápido e desaceleração forte */
+    --animation-ease-style: cubic-bezier(0.16, 1, 0.3, 1);
     --animation-duration-instant: 60ms;
     --animation-duration-fast: 120ms;
     --animation-duration-medium: 250ms;
@@ -70,7 +73,7 @@
     --border-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 30%);
 
     /* Espaçamento */
-    --spacing-xs: 0.125rem;
+    --spacing-xs: 0.25rem;
     --spacing-sm: 0.25rem;
     --spacing-md: 0.5rem;
     --spacing-lg: 0.75rem;
@@ -110,8 +113,9 @@
 *::before,
 *::after {
     border: none;
-    box-shadow: none;
     outline: none;
+    text-shadow: none;
+    box-shadow: none;
 }
 
 html,
@@ -121,6 +125,9 @@ body {
 
     background-color: var(--bg-base);
     color: var(--text-primary);
+
+    /* Tema escuro nativo: barras de rolagem, seletores e campos do navegador seguem o fundo */
+    color-scheme: dark;
 
     font-family: var(--font-family-interface);
     font-size: var(--font-size-sm);
@@ -155,6 +162,8 @@ a {
 
 button {
     cursor: pointer;
+    /* Toque sem o atraso do zoom por duplo toque */
+    touch-action: manipulation;
 
     &:disabled {
         cursor: not-allowed;
@@ -192,14 +201,27 @@ svg {
     text-shadow: none;
 }
 
-/* Títulos: h1-h4 na face de display (Fraunces), h5-h6 e parágrafo na de interface (Inter) */
+/*
+    Títulos: h2-h4 na face de display (Geist); h1, h5-h6 e parágrafo na de interface (Inter).
+    O tracking negativo aperta conforme o tamanho cresce, como pede uma sem serifa de display,
+    e a quebra equilibrada evita títulos com uma palavra órfã na última linha.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
+}
 
 h1 {
-    font-family: var(--font-family-display);
+    font-family: var(--font-family-interface);
     font-size: var(--font-size-3xl);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     line-height: 1.1;
 }
 
@@ -208,7 +230,7 @@ h2 {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.025em;
     line-height: 1.15;
 }
 
@@ -217,7 +239,7 @@ h3 {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     line-height: 1.2;
 }
 
@@ -226,7 +248,7 @@ h4 {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
-    letter-spacing: 0;
+    letter-spacing: -0.015em;
     line-height: 1.25;
 }
 
@@ -235,7 +257,7 @@ h5 {
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-semibold);
     color: var(--text-tertiary);
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
     line-height: 1.3;
 }
 
@@ -273,6 +295,12 @@ p {
 .modal-header,
 .modal-footer {
     border: 0;
+}
+
+/* O `.modal` é o contêiner de rolagem do MDB: a rolagem para no modal e não vaza para a página */
+
+.modal {
+    overscroll-behavior: contain;
 }
 
 /*
@@ -317,7 +345,7 @@ p {
 .form-outline .form-control {
     background-color: var(--bg-subtle);
     color: var(--text-primary);
-    font-family: var(--font-family-sans);
+    font-family: var(--font-family-mono);
 
     border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
     padding: var(--spacing-lg) var(--spacing-xl);
@@ -376,7 +404,7 @@ p {
 */
 
 .form-outline .form-control ~ .form-label {
-    font-family: var(--font-family-sans);
+    font-family: var(--font-family-mono);
     color: var(--text-muted);
 
     padding: 0;
@@ -410,23 +438,340 @@ p {
     }
 }
 
-/* Ação principal dos formulários de autenticação, idêntica no login e no registro */
+/*
+    Telas de Agendamentos, Serviços e Dashboard: página, busca, grade e cartão compartilhados,
+    para que as três falem a mesma língua visual sem moldura.
+*/
 
-.app-auth__enviar {
-    width: 100%;
-    padding: var(--spacing-lg);
+.app-tela {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-3xl);
 
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-semibold);
+    max-width: 68rem;
+    margin: 0 auto;
+}
+
+.app-tela__cabecalho {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-md);
+}
+
+.app-tela__titulo {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+}
+
+.app-tela__descricao {
+    color: var(--text-muted);
+}
+
+/* Barra de ferramentas: a busca ocupa a linha e a ação de criação fecha à direita */
+
+.app-tela__ferramentas {
+    display: flex;
+    align-items: stretch;
+    gap: var(--spacing-md);
+}
+
+/* Ação de criação: o único acento da tela, porque é a ação principal dela */
+
+.app-tela__criar {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    padding: 0 var(--spacing-lg);
 
     background-color: var(--accent-surface);
-    color: var(--text-primary);
     border-radius: var(--border-radius-md);
+    color: var(--text-primary);
 
     transition: background-color var(--animation-fast);
 
+    i {
+        font-size: var(--font-size-md);
+    }
+
+    /* Hover clareia o acento, o mesmo retorno da ação principal dos formulários */
     &:hover {
         background-color: var(--accent-hover);
+    }
+}
+
+/*
+    Busca preenchida e sem moldura, como os campos dos formulários: o sublinhado existe
+    transparente em repouso e só ganha o acento no foco, sem deslocar o layout.
+*/
+
+.app-busca {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    padding: var(--spacing-md) var(--spacing-lg);
+
+    background-color: var(--bg-subtle);
+    border-bottom: var(--border-width-sm) solid transparent;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), border-color var(--animation-fast);
+
+    /* Hover clareia o fundo para indicar que a barra aceita digitação */
+    &:hover {
+        background-color: var(--bg-surface);
+    }
+
+    &:focus-within {
+        background-color: var(--bg-surface);
+        border-bottom-color: var(--accent-hover);
+    }
+}
+
+.app-busca__entrada {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    background-color: transparent;
+    color: var(--text-primary);
+
+    &::placeholder {
+        color: var(--text-faint);
+    }
+
+    /* O sublinhado da barra já sinaliza o foco; o contorno global repetiria o aviso */
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.app-busca__filtro {
+    flex: none;
+    padding: 0 var(--spacing-md);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+
+    transition: color var(--animation-fast);
+
+    /* Hover acende o texto para mostrar que o campo da busca pode ser trocado */
+    &:hover {
+        color: var(--text-primary);
+    }
+
+    option {
+        background-color: var(--bg-elevated);
+        color: var(--text-primary);
+    }
+}
+
+/* Grade de cartões: quatro colunas, estreitando para três e depois duas */
+
+@keyframes app-surgir {
+    from {
+        opacity: var(--opacity-hidden);
+    }
+
+    to {
+        opacity: var(--opacity-visible);
+    }
+}
+
+.app-grade {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-xl);
+
+    /* Um único fade ao montar, para a grade não saltar na tela de uma vez */
+    animation: app-surgir var(--animation-medium) both;
+}
+
+/* O host do componente fica entre o `li` e o cartão, então também estica para alinhar a linha */
+
+.app-grade > li > * {
+    display: block;
+    height: 100%;
+}
+
+@media (max-width: 80rem) {
+    .app-grade {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 64rem) {
+    .app-grade {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/*
+    Cartão quadrado e sem moldura: o raio `lg` o separa das pílulas `full`, e o fundo é a
+    única costura contra a página.
+*/
+
+.app-cartao {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-lg);
+
+    height: 100%;
+    padding: var(--spacing-xl);
+
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-lg);
+
+    transition: background-color var(--animation-fast), transform var(--animation-fast);
+
+    /* Hover: leve aumento e clareamento do fundo, só para marcar o cartão sob o ponteiro */
+    &:hover {
+        background-color: var(--bg-elevated);
+        transform: scale(1.02);
+    }
+}
+
+.app-cartao__cabecalho {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.app-cartao__titulo {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+
+    i {
+        color: var(--text-muted);
+    }
+}
+
+/* Metadados com ícone no lugar do rótulo escrito: o ícone do `dt` carrega o nome acessível */
+
+.app-cartao__campos {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-sm);
+    margin: 0;
+}
+
+.app-cartao__campo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 0;
+
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    /* Algarismos de largura fixa: valores, durações e horários alinham entre cartões */
+    font-variant-numeric: tabular-nums;
+
+    dt {
+        flex: none;
+        font-size: var(--font-size-sm);
+        line-height: 1;
+        color: var(--text-faint);
+    }
+
+    dd {
+        min-width: 0;
+        margin: 0;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* Ações do cartão: círculos discretos em repouso, levemente apagados até serem alcançados */
+
+.app-cartao__acao {
+    flex: none;
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-lg);
+    height: var(--font-size-lg);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-full);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    i {
+        font-size: var(--font-size-sm);
+        transition: transform var(--animation-fast);
+    }
+
+    /* Hover e foco preenchem o círculo e aumentam o ícone, confirmando o alvo do clique */
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* Ação destrutiva: o vermelho de perigo só aparece quando ela é alcançada */
+
+.app-cartao__acao--perigo:hover,
+.app-cartao__acao--perigo:focus-visible {
+    background-color: var(--danger-surface);
+    color: var(--danger-hover);
+}
+
+/* Estado vazio: um bloco preenchido e discreto, nunca uma área em branco */
+
+.app-vazio {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    padding: var(--spacing-3xl);
+
+    background-color: var(--bg-subtle);
+    border-radius: var(--border-radius-lg);
+    color: var(--text-faint);
+
+    i {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* Movimento reduzido: a grade surge sem fade e os cartões não crescem no hover */
+
+@media (prefers-reduced-motion: reduce) {
+    .app-grade {
+        animation: none;
+    }
+
+    .app-cartao:hover {
+        transform: none;
+    }
+}
+
+@media (max-width: 48rem) {
+    .app-tela__titulo {
+        font-size: var(--font-size-xl);
     }
 }
 
