@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": true,
-        "includes": ["**", "!**/node_modules", "!**/dist", "!**/.angular", "!**/public"]
+        "includes": ["src/**"]
     },
     "formatter": {
         "enabled": true,

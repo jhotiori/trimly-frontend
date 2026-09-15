@@ -1,0 +1,14 @@
+@if (disponibilidades.length > 0) {
+    <ul class="app-grade">
+        @for (disponibilidade of disponibilidades; track disponibilidade.id) {
+            <li>
+                <app-disponibilidade-item [disponibilidade]="disponibilidade" />
+            </li>
+        }
+    </ul>
+} @else {
+    <p class="app-vazio">
+        <i aria-hidden="true" class="ti ti-calendar-off"></i>
+        Nenhuma disponibilidade cadastrada ainda.
+    </p>
+}

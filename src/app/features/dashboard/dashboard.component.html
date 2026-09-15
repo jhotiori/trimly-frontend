@@ -1,0 +1,20 @@
+<div class="app-tela">
+    <header class="app-tela__cabecalho">
+        <h1 class="app-tela__titulo">Bem-vindo(a), {{ authStore.usuarioAtual()?.nome }}.</h1>
+        <p class="app-tela__descricao">Aqui está a agenda da nossa semana.</p>
+    </header>
+
+    <section class="app-dashboard__secao">
+        <header class="app-dashboard__cabecalho">
+            <h2 class="app-dashboard__titulo">Agendamentos</h2>
+        </header>
+        <app-agendamento-list [agendamentos]="agendamentosVisiveis()" />
+    </section>
+
+    <section class="app-dashboard__secao">
+        <header class="app-dashboard__cabecalho">
+            <h2 class="app-dashboard__titulo">Disponibilidades</h2>
+        </header>
+        <app-disponibilidade-list [disponibilidades]="disponibilidades()" />
+    </section>
+</div>

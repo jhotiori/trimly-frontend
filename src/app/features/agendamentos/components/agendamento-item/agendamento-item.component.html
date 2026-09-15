@@ -1,0 +1,58 @@
+<article class="app-cartao">
+    <header class="app-cartao__cabecalho">
+        <h3 class="app-cartao__titulo">{{ agendamento.servicoNome }}</h3>
+
+        @if (authStore.isGestor()) {
+            <button (click)="edit()" aria-label="Editar agendamento" class="app-cartao__acao" type="button">
+                <i aria-hidden="true" class="ti ti-pencil"></i>
+            </button>
+
+            <button
+                (click)="remove()"
+                aria-label="Excluir agendamento"
+                class="app-cartao__acao app-cartao__acao--perigo"
+                type="button">
+                <i aria-hidden="true" class="ti ti-trash"></i>
+            </button>
+        } @else {
+            <div class="app-agendamento-item__acoes">
+                <button
+                    (click)="toggleMenu()"
+                    [attr.aria-expanded]="isMenuAberto()"
+                    aria-label="Ações do agendamento"
+                    class="app-cartao__acao"
+                    type="button">
+                    <i aria-hidden="true" class="ti ti-dots"></i>
+                </button>
+
+                @if (isMenuAberto()) {
+                    <div class="app-agendamento-item__menu">
+                        <button (click)="cancel()" class="app-agendamento-item__opcao" type="button">Cancelar</button>
+                        <button (click)="edit()" class="app-agendamento-item__opcao" type="button">Mudar</button>
+                    </div>
+                }
+            </div>
+        }
+    </header>
+
+    <dl class="app-cartao__campos">
+        @if (authStore.isGestor()) {
+            <div class="app-cartao__campo">
+                <dt><i aria-label="Cliente" class="ti ti-user" role="img"></i></dt>
+                <dd>{{ agendamento.usuarioNome }}</dd>
+            </div>
+        }
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Data" class="ti ti-calendar" role="img"></i></dt>
+            <dd>{{ formatData(agendamento.data) }}</dd>
+        </div>
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Duração" class="ti ti-clock" role="img"></i></dt>
+            <dd>{{ agendamento.duracao }} min</dd>
+        </div>
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Preço" class="ti ti-cash" role="img"></i></dt>
+            <dd>{{ formatPreco(agendamento.servicoPreco) }}</dd>
+        </div>
+    </dl>
+</article>

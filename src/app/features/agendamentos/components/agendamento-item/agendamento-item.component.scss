@@ -1,0 +1,47 @@
+/*
+    O cartão vem do `.app-cartao` global, sem moldura como os demais: a antiga borda que
+    distinguia este item da pílula do serviço saiu quando todos passaram ao mesmo cartão.
+    Aqui fica só o menu compacto do cliente.
+*/
+
+.app-agendamento-item__acoes {
+    position: relative;
+}
+
+/* As opções ancoram abaixo do alternador, num fundo acima do hover do cartão */
+
+.app-agendamento-item__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--spacing-sm));
+    z-index: 1;
+
+    display: flex;
+    flex-flow: column;
+
+    padding: var(--spacing-sm);
+
+    background-color: var(--bg-hover);
+    border-radius: var(--border-radius-md);
+}
+
+.app-agendamento-item__opcao {
+    padding: var(--spacing-md) var(--spacing-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-xs);
+    text-align: left;
+    white-space: nowrap;
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    /* Hover e foco realçam a opção sob o ponteiro ou o teclado antes do clique */
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-highlight);
+        color: var(--text-primary);
+    }
+}

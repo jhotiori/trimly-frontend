@@ -25,6 +25,10 @@
 </p>
 
 <blockquote>
+    <em>
+    Aplicação Frontend do Trimly, SPA em Angular que consome a API REST do backend para o gerenciamento de agendamentos em barbearias.
+    </em>
+    <br><br>
     <strong>
     Projeto acadêmico de uma aplicação voltada ao gerenciamento de agendamentos em barbearias, desenvolvida a partir de uma demanda real e focada na modernização do processo de contratação de serviços de cuidados masculinos.
     </strong>
@@ -33,10 +37,14 @@
 <hr>
 
 ## 🛠️ Técnologias
-| Área                   | Tecnologias                                               |
-| ---------------------- | --------------------------------------------------------- |
-| **Frontend**           | Angular (19) · Bootstrap · Material Design Bootstrap      |
-| **Controle de versão** | Git · GitHub                                              |
+| Área                      | Tecnologias                                                  |
+| ------------------------- | ------------------------------------------------------------- |
+| **Framework**             | Angular (19, standalone) · TypeScript                         |
+| **UI**                    | MDB Angular UI Kit (Material Design Bootstrap) · SweetAlert2  |
+| **Qualidade de código**   | Biome (lint, format, import sort)                              |
+| **Testes**                | Karma · Jasmine                                                |
+| **Gerenciador de pacotes**| Bun                                                             |
+| **Controle de versão**    | Git · GitHub                                                   |
 
 ## 👥 Equipe
 | Integrante             | Cargo           | Responsabilidade                |
