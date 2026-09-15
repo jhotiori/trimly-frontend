@@ -1,0 +1,26 @@
+/* Campos empilhados com o mesmo respiro do cartão */
+
+.app-auth__campos {
+    display: grid;
+    gap: var(--spacing-2xl);
+}
+
+/* Ação principal dos formulários de autenticação, idêntica no login e no registro */
+
+.app-auth__enviar {
+    width: 100%;
+    padding: var(--spacing-lg);
+
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+
+    background-color: var(--accent-surface);
+    color: var(--text-primary);
+    border-radius: var(--border-radius-md);
+
+    transition: background-color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--accent-hover);
+    }
+}

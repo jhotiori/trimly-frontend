@@ -1,0 +1,30 @@
+<article class="app-cartao">
+    <header class="app-cartao__cabecalho">
+        <h3 class="app-cartao__titulo">{{ servico.nome }}</h3>
+
+        @if (authStore.isGestor()) {
+            <button (click)="edit()" aria-label="Editar serviço" class="app-cartao__acao" type="button">
+                <i aria-hidden="true" class="ti ti-pencil"></i>
+            </button>
+
+            <button
+                (click)="remove()"
+                aria-label="Excluir serviço"
+                class="app-cartao__acao app-cartao__acao--perigo"
+                type="button">
+                <i aria-hidden="true" class="ti ti-trash"></i>
+            </button>
+        }
+    </header>
+
+    <dl class="app-cartao__campos">
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Valor" class="ti ti-cash" role="img"></i></dt>
+            <dd>{{ formatPreco(servico.valor) }}</dd>
+        </div>
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Duração" class="ti ti-clock" role="img"></i></dt>
+            <dd>{{ servico.duracao }} min</dd>
+        </div>
+    </dl>
+</article>

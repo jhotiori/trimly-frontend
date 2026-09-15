@@ -1,0 +1,14 @@
+@if (servicos.length > 0) {
+    <ul class="app-grade">
+        @for (servico of servicos; track servico.id) {
+            <li>
+                <app-servico-item [servico]="servico" />
+            </li>
+        }
+    </ul>
+} @else {
+    <p class="app-vazio">
+        <i aria-hidden="true" class="ti ti-scissors-off"></i>
+        Nenhum serviço cadastrado ainda.
+    </p>
+}

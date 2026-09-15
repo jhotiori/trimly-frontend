@@ -1,0 +1,82 @@
+<aside [class.app-sidebar--recolhida]="collapsed()" class="app-sidebar" >
+    <div class="app-sidebar__marca">
+        <img alt="" class="app-sidebar__simbolo" src="/icons/scissor.svg" />
+        <span class="app-sidebar__logotipo">Trimly</span>
+    </div>
+
+    <nav class="app-sidebar__nav">
+        <ul class="app-sidebar__itens">
+            <li>
+                <a
+                    [routerLink]="routePaths.DASHBOARD_VIEW_ROUTE"
+                    class="app-sidebar__item"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Dashboard">
+                    <i aria-hidden="true" class="ti ti-home"></i>
+                    <span class="app-sidebar__rotulo">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a
+                    [routerLink]="routePaths.DASHBOARD_AGENDAMENTOS_ROUTE"
+                    class="app-sidebar__item"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Novo agendamento">
+                    <i aria-hidden="true" class="ti ti-calendar-plus"></i>
+                    <span class="app-sidebar__rotulo">Agendamentos</span>
+                </a>
+            </li>
+            <li>
+                <a
+                    [routerLink]="routePaths.DASHBOARD_SERVICOS_ROUTE"
+                    class="app-sidebar__item"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Serviços">
+                    <i aria-hidden="true" class="ti ti-razor-electric"></i>
+                    <span class="app-sidebar__rotulo">Serviços</span>
+                </a>
+            </li>
+            @if (authStore.isGestor()) {
+                <li>
+                    <button
+                        (click)="openDisponibilidadeForm()"
+                        class="app-sidebar__item"
+                        title="Nova disponibilidade"
+                        type="button">
+                        <i aria-hidden="true" class="ti ti-calendar-time"></i>
+                        <span class="app-sidebar__rotulo">Disponibilidades</span>
+                    </button>
+                </li>
+            }
+            <li>
+                <a
+                    [routerLink]="routePaths.DASHBOARD_CONFIGURACOES_ROUTE"
+                    class="app-sidebar__item"
+                    routerLinkActive="app-sidebar__item--ativo"
+                    title="Configurações">
+                    <i aria-hidden="true" class="ti ti-settings"></i>
+                    <span class="app-sidebar__rotulo">Configurações</span>
+                </a>
+            </li>
+            <li>
+                <button
+                    (click)="logout()"
+                    class="app-sidebar__item"
+                    title="Sair"
+                    type="button">
+                    <i aria-hidden="true" class="ti ti-logout"></i>
+                    <span class="app-sidebar__rotulo">Sair</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <button
+        (click)="toggle()"
+        [attr.aria-expanded]="!collapsed()"
+        aria-label="Recolher ou expandir a barra lateral"
+        class="app-sidebar__alternar"
+        type="button">
+        <i [class.ti-chevron-left]="!collapsed()" [class.ti-chevron-right]="collapsed()" aria-hidden="true" class="ti" ></i>
+    </button>
+</aside>

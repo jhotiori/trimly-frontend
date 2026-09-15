@@ -1,0 +1,17 @@
+/* Seções do painel, sem cartão e sem filete: o título e o respiro bastam como moldura */
+
+.app-dashboard__secao {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-xl);
+}
+
+.app-dashboard__cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-lg);
+}
+
+.app-dashboard__titulo {
+    font-size: var(--font-size-lg);
+}

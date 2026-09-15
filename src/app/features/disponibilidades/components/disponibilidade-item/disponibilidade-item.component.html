@@ -1,0 +1,25 @@
+<article class="app-cartao">
+    <header class="app-cartao__cabecalho">
+        <h3 class="app-cartao__titulo">
+            <i aria-hidden="true" class="ti ti-calendar"></i>
+            {{ disponibilidade.diaSemana | enumLabel }}
+        </h3>
+
+        @if (authStore.isGestor()) {
+            <button
+                (click)="remove()"
+                aria-label="Excluir disponibilidade"
+                class="app-cartao__acao app-cartao__acao--perigo"
+                type="button">
+                <i aria-hidden="true" class="ti ti-trash"></i>
+            </button>
+        }
+    </header>
+
+    <dl class="app-cartao__campos">
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Janela de atendimento" class="ti ti-clock" role="img"></i></dt>
+            <dd>{{ formatHora(disponibilidade.horaInicio) }} às {{ formatHora(disponibilidade.horaFim) }}</dd>
+        </div>
+    </dl>
+</article>

@@ -30,7 +30,8 @@ node_modules/
 # AI (Artifacts, Settings)
 # =========================
 
-.claude
+.claude/*
+!.claude/specs
 .agents
 openspec/
 graphify-out/
