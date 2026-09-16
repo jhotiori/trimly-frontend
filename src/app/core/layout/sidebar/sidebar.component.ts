@@ -5,6 +5,7 @@ import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
 import { AuthStore } from "../../../features/auth/services/auth.store";
 import { DisponibilidadeFormComponent } from "../../../features/disponibilidades/components/disponibilidade-form/disponibilidade-form.component";
 import { RoutePaths } from "../../config/route-paths.config";
+import { ThemeService } from "../../services/theme.service";
 
 /** Configuração aplicada ao modal aberto pela barra lateral. */
 const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
@@ -12,8 +13,8 @@ const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
 /**
  * Barra lateral de navegação do painel, com recolhimento e a criação de disponibilidades.
  *
- * Dashboard, Agendamentos, Serviços e Configurações navegam por rota; Disponibilidades abre
- * o formulário de criação em um modal, sem sair da página atual.
+ * Dashboard, Agendamentos e Serviços navegam por rota; Disponibilidades abre o formulário de
+ * criação em um modal, sem sair da página atual, e Tema alterna entre o tema escuro e o claro.
  */
 @Component({
     selector: "app-sidebar",
@@ -36,6 +37,12 @@ export class SidebarComponent {
      * @see {@link AuthStore}
      */
     readonly authStore = inject(AuthStore);
+
+    /**
+     * Tema em vigor, alternado pela entrada Tema do menu.
+     * @see {@link ThemeService}
+     */
+    readonly themeService = inject(ThemeService);
 
     /** Caminhos de navegação consumidos pelos links do template. */
     protected readonly routePaths = RoutePaths;

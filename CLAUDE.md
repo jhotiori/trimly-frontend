@@ -38,10 +38,13 @@ bun run start     # ng serve, dev server
 bun run build     # ng build, production build
 bun run format    # biome format --write .
 bun run check     # biome check . (lint + format + import sort)
-ng test       # karma/jasmine unit tests (no bun alias)
 ng g c <path> # creates a new component (Angular)
 ng g s <path> # creates a new service (Angular)
 ```
+
+The project carries no unit tests: `src/**` holds no `*.spec.ts` file. The karma/jasmine
+tooling stays installed (`angular.json`'s `test` target, `tsconfig.spec.json`), so `ng test`
+still runs, just with nothing to execute. Do not add a spec file unless asked.
 
 Biome owns frontend style (4-space indent, 120-col wrap, double quotes, sorted imports).
 Its scope is `src/**` only (`files.includes` in `biome.json`); `.scss` is not processed.
@@ -83,9 +86,8 @@ Angular 19 standalone app (no `NgModule`). Routing in `app.routes.ts`, bootstrap
 under `app/features/<domain>/` (`components/`, `models/`, `services/`), and app-wide
 infrastructure lives under `app/core/` (`config/`, `guards/`, `models/exception/`,
 `layout/`, `pipes/`, `services/`). `features/*` may depend on `core/`, never on another
-`features/*` folder directly, except `dashboard/` and `configuracoes/`, which are
-aggregation views allowed to read multiple feature stores; `core/` never imports from
-`features/`. UI uses `mdb-angular-ui-kit` (Material Design Bootstrap), styles wired in
+`features/*` folder directly, except `dashboard/`, an aggregation view allowed to read
+multiple feature stores; `core/` never imports from `features/`. UI uses `mdb-angular-ui-kit` (Material Design Bootstrap), styles wired in
 `angular.json`.
 
 `core/layout/` contains the dashboard layout shell (`app-dashboard-layout`: sidebar
@@ -173,15 +175,36 @@ card grid with a single `--animation-medium` fade-in on mount), `.app-cartao`
 (empty state). Items and lists compose these classes instead of restyling cards per
 component; component SCSS keeps only what is truly local (the agendamento client menu).
 Every micro-interaction carries a one-line SCSS comment saying why it exists, and
-`prefers-reduced-motion` drops the fade and the hover scale. `features/configuracoes`
-stays outside this vocabulary.
+`prefers-reduced-motion` drops the fade and the hover scale.
 
-The global reset zeroes every border and no component is an exception: a border only
-marks focus or the active state (the search and form-field underlines, the sidebar's
-active edge), kept transparent at rest so nothing shifts. The former bordered
-`agendamento-item` exception is gone; every card is the borderless `.app-cartao`.
+The global reset zeroes every border, and a border only marks focus or the active state
+(the full perimeter border of `.app-busca` and the MDB `.form-outline` fields, the
+sidebar's active edge), kept transparent at rest so nothing shifts. Hover never draws a
+border: it only shifts the background color. The one deliberate exception is the `.app-sidebar` panel itself: a
+`--border-width-xs` `--border-base` frame with only its right corners rounded
+(`--border-radius-lg`), since its left edge sits flush against the viewport. The former
+bordered `agendamento-item` exception is gone; every card is the borderless `.app-cartao`.
 
 - Fonts load via one `<link>` in `src/index.html`, requesting only the weights in use:
-  Geist 600/800 (`--font-family-display`, h2-h4 and the sidebar brand), Inter
-  300/400/600/800 (`--font-family-interface`), Geist Mono 400 (`--font-family-mono`, the MDB
-  `.form-outline` fields). Add a weight to the `<link>` before using it in SCSS.
+  Geist 600/800 (`--font-family-display`, h2-h4), Inter 300/400/600/800
+  (`--font-family-interface`), Geist Mono 400 (`--font-family-mono`, the MDB
+  `.form-outline` fields) and Playfair Display 600/700 (`--font-family-serif`, read by the
+  sidebar logotype and nothing else). Add a weight to the `<link>` before using it in SCSS.
+
+### Themes
+
+Dark is the default and writes nothing to the DOM. Light is a scope, `[data-theme="light"]`
+on `<html>`, that re-declares only the four base tokens `--text-primary`, `--bg-base`,
+`--accent-base` and `--danger-base`; every other color is a `color-mix()` derived from those,
+so the whole palette recomputes with no component-level edit. A new color belongs in that
+ladder, never as a literal inside a component.
+
+`ThemeService` (`app/core/services/theme.service.ts`) is the single owner of the theme: a
+signal, the `localStorage` key `trimly-theme`, the `data-theme` attribute and the
+`<meta name="theme-color">` content. `app.config.ts` instantiates it through
+`provideAppInitializer` so the persisted theme lands before the first paint on every route,
+including login, which renders no sidebar. The only control is the sidebar's "Tema" entry.
+The universal reset carries the `--animation-medium` transition for `background-color`,
+`color`, `border-color` and `box-shadow`, which is what makes the switch fade instead of
+snap; component rules that declare their own `transition` keep their `--animation-fast`
+hover timing.

@@ -32,7 +32,7 @@ export class RegistrarFormComponent {
     readonly form = this.builder.nonNullable.group({
         nome: ["", [Validators.required]],
         email: ["", [Validators.required, Validators.email]],
-        senha: ["", [Validators.required, Validators.minLength(4)]],
+        senha: ["", [Validators.required, Validators.minLength(6)]],
     });
 
     /**

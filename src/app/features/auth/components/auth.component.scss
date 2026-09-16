@@ -21,6 +21,13 @@
     gap: var(--spacing-2xl);
 }
 
+/* Título: um degrau abaixo do `h2` global e com folga extra antes do formulário */
+
+.app-auth__titulo {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+}
+
 /* Troca de modo: apenas opacidade, sem deslizar nem mudar de altura */
 
 .app-auth__formulario {

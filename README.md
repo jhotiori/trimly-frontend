@@ -42,7 +42,6 @@
 | **Framework**             | Angular (19, standalone) · TypeScript                         |
 | **UI**                    | MDB Angular UI Kit (Material Design Bootstrap) · SweetAlert2  |
 | **Qualidade de código**   | Biome (lint, format, import sort)                              |
-| **Testes**                | Karma · Jasmine                                                |
 | **Gerenciador de pacotes**| Bun                                                             |
 | **Controle de versão**    | Git · GitHub                                                   |
 

@@ -3,7 +3,6 @@ import { authGuard } from "./core/guards/auth.guard";
 import { DashboardLayoutComponent } from "./core/layout/dashboard-layout/dashboard-layout.component";
 import { AgendamentoScreenComponent } from "./features/agendamentos/components/agendamento-screen/agendamento-screen.component";
 import { AuthComponent } from "./features/auth/components/auth.component";
-import { ConfiguracoesComponent } from "./features/configuracoes/configuracoes.component";
 import { DashboardComponent } from "./features/dashboard/dashboard.component";
 import { ServicoScreenComponent } from "./features/servicos/components/servico-screen/servico-screen.component";
 
@@ -38,10 +37,6 @@ export const routes: Routes = [
             {
                 path: "servicos",
                 component: ServicoScreenComponent,
-            },
-            {
-                path: "configuracoes",
-                component: ConfiguracoesComponent,
             },
         ],
     },

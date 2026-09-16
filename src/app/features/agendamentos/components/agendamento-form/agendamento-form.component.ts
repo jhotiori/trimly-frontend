@@ -78,6 +78,12 @@ export class AgendamentoFormComponent implements OnInit {
     /** Indica que houve uma tentativa de envio, liberando as mensagens de erro. */
     readonly submitted = signal(false);
 
+    /** Menor data aceita pelo campo de data: hoje, no formato `yyyy-MM-dd`. */
+    readonly dataMinima = this.getDataIso(0);
+
+    /** Maior data aceita pelo campo de data: hoje mais 14 dias, no formato `yyyy-MM-dd`. */
+    readonly dataMaxima = this.getDataIso(14);
+
     /** Campos do agendamento. */
     readonly form = this.builder.nonNullable.group({
         data: ["", Validators.required],
@@ -191,5 +197,21 @@ export class AgendamentoFormComponent implements OnInit {
         const campo = this.form.get(nome);
 
         return !!campo?.invalid && (campo.touched || this.submitted());
+    }
+
+    /**
+     * Calcula a data local deslocada do dia atual, no formato aceito pelo `<input type="date">`.
+     *
+     * @param dias - Quantidade de dias a somar ao dia atual.
+     * @returns A data no formato `yyyy-MM-dd`, no fuso local.
+     */
+    private getDataIso(dias: number): string {
+        const data = new Date();
+        data.setDate(data.getDate() + dias);
+
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        const dia = String(data.getDate()).padStart(2, "0");
+
+        return `${data.getFullYear()}-${mes}-${dia}`;
     }
 }

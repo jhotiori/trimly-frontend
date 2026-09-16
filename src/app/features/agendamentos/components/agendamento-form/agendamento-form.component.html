@@ -1,6 +1,6 @@
 <div class="modal-header app-agendamento-form__cabecalho">
     <h5 class="modal-title app-agendamento-form__titulo">
-        {{ isEditing ? "Editar agendamento" : "Novo agendamento" }}
+        {{ isEditing ? "Editar Agendamento" : "Novo Agendamento" }}
     </h5>
     <button (click)="close()" aria-label="Fechar" class="app-agendamento-form__fechar" type="button">
         <i aria-hidden="true" class="ti ti-x"></i>
@@ -12,6 +12,8 @@
         <div class="app-agendamento-form__linha">
             <mdb-form-control>
                 <input
+                    [attr.max]="dataMaxima"
+                    [attr.min]="dataMinima"
                     [class.is-invalid]="isInvalid('data')"
                     class="form-control"
                     formControlName="data"

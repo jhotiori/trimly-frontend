@@ -12,6 +12,7 @@
     --font-family-display: "Geist", "Inter", sans-serif;
     --font-family-interface: "Inter", "Segoe UI", sans-serif;
     --font-family-mono: "Geist Mono", "SFMono-Regular", Consolas, monospace;
+    --font-family-serif: "Playfair Display", "Georgia", serif;
 
     /* Pesos tipográficos */
     --font-weight-bold: 800;
@@ -53,6 +54,8 @@
     --accent-surface: color-mix(in srgb, var(--accent-base), var(--text-primary) 8%);
     --accent-elevated: color-mix(in srgb, var(--accent-base), var(--text-primary) 16%);
     --accent-hover: color-mix(in srgb, var(--accent-base), var(--text-primary) 24%);
+    /* Texto sobre fundo de acento: a escada do acento não muda de tema, então este par também não */
+    --text-on-accent: hsl(0 0 90%);
 
     /* Ações destrutivas: vermelho escuro e dessaturado, distinto do acento */
     --danger-base: hsl(356 34% 38%);
@@ -80,6 +83,7 @@
     --spacing-xl: 1rem;
     --spacing-2xl: 1.5rem;
     --spacing-3xl: 2rem;
+    --spacing-4xl: 4rem;
 
     --border-width-xs: 0.0625rem;
     --border-width-sm: 0.1rem;
@@ -94,12 +98,57 @@
 
     --opacity-visible: 1;
     --opacity-disabled: 0.5;
+    /* Inativo, mas não desabilitado: repouso de superfícies que acendem ao serem alcançadas */
+    --opacity-inactive: 0.75;
     --opacity-hidden: 0;
+}
+
+/*
+    Tema claro: só os tokens de base mudam de valor. Os derivados são repetidos com a mesma
+    fórmula `color-mix()`, para a escada de contraste do tema claro espelhar a do escuro.
+*/
+
+[data-theme="light"] {
+    /* Tema claro nativo: barras de rolagem, seletores e campos do navegador acompanham */
+    color-scheme: light;
+
+    /* Texto */
+    --text-primary: hsl(0 0 10%);
+    --text-secondary: color-mix(in srgb, var(--text-primary), var(--bg-base) 15%);
+    --text-tertiary: color-mix(in srgb, var(--text-primary), var(--bg-base) 30%);
+
+    --text-muted: color-mix(in srgb, var(--text-primary), var(--bg-base) 45%);
+    --text-faint: color-mix(in srgb, var(--text-primary), var(--bg-base) 60%);
+
+    /* Acento */
+    --accent-base: hsl(0 60% 40%);
+    --accent-surface: color-mix(in srgb, var(--accent-base), var(--text-primary) 8%);
+    --accent-elevated: color-mix(in srgb, var(--accent-base), var(--text-primary) 16%);
+    --accent-hover: color-mix(in srgb, var(--accent-base), var(--text-primary) 24%);
+
+    /* Ações destrutivas */
+    --danger-base: hsl(356 34% 38%);
+    --danger-hover: color-mix(in srgb, var(--danger-base), var(--text-primary) 20%);
+    --danger-surface: color-mix(in srgb, var(--danger-base), var(--bg-base) 72%);
+
+    /* Fundo */
+    --bg-base: hsl(0 0 90%);
+    --bg-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 17%);
+    --bg-highlight: color-mix(in srgb, var(--bg-base), var(--text-primary) 23%);
+
+    --bg-subtle: color-mix(in srgb, var(--bg-base), var(--text-primary) 5%);
+    --bg-surface: color-mix(in srgb, var(--bg-base), var(--text-primary) 8%);
+    --bg-elevated: color-mix(in srgb, var(--bg-base), var(--text-primary) 11%);
+
+    /* Bordas */
+    --border-base: color-mix(in srgb, var(--bg-base), var(--text-primary) 20%);
+    --border-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 30%);
 }
 
 /* Padrões globais de elementos */
 
 * {
+    text-rendering: optimizeLegibility;
     box-sizing: border-box;
 }
 
@@ -116,6 +165,13 @@
     outline: none;
     text-shadow: none;
     box-shadow: none;
+
+    /*
+        Troca de tema: as cores vêm todas de tokens, então animá-las aqui cobre a aplicação
+        inteira de uma vez. Quem já declara a própria transição mantém o tempo dela.
+    */
+    transition: background-color var(--animation-medium), color var(--animation-medium),
+        border-color var(--animation-medium), box-shadow var(--animation-medium);
 }
 
 html,
@@ -126,14 +182,20 @@ body {
     background-color: var(--bg-base);
     color: var(--text-primary);
 
-    /* Tema escuro nativo: barras de rolagem, seletores e campos do navegador seguem o fundo */
-    color-scheme: dark;
-
     font-family: var(--font-family-interface);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
     text-wrap: pretty;
+}
+
+/*
+    Tema escuro nativo por padrão, herdado pelo `body`. O tema claro o substitui no bloco
+    `[data-theme="light"]`, que tem especificidade maior e vence independente da ordem.
+*/
+
+html {
+    color-scheme: dark;
 }
 
 h1,
@@ -329,17 +391,33 @@ p {
 
 .app-alert__botao {
     border-radius: var(--border-radius-md);
+    font-weight: var(--font-weight-semibold);
     transition: background-color var(--animation-fast);
 }
 
-/* Campo preenchido e sem moldura: o entalhe do MDB sai e um único sublinhado assume */
+/*
+    Confirmar é o único botão do diálogo com fundo de acento: o texto herdaria `--text-primary`
+    do popup e inverteria com o tema, enquanto o fundo continua o mesmo nos dois.
+*/
 
-.form-outline .form-control ~ .form-notch {
-    display: none;
+.app-alert__botao.swal2-confirm {
+    color: var(--text-on-accent);
 }
 
-.form-outline {
-    position: relative;
+/* Texto descritivo do diálogo: mesmo par itálico + `--text-muted` de `.app-tela__descricao` */
+
+.app-alert__texto {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/*
+    Campo preenchido e sem moldura: o entalhe do MDB sai e a moldura completa assume, existindo
+    transparente em repouso para só marcar o foco, o estado inválido e nenhum deslocamento.
+*/
+
+.form-outline .form-control~.form-notch {
+    display: none;
 }
 
 .form-outline .form-control {
@@ -347,11 +425,13 @@ p {
     color: var(--text-primary);
     font-family: var(--font-family-mono);
 
-    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    border: var(--border-width-sm) solid transparent;
+    border-radius: var(--border-radius-md);
     padding: var(--spacing-lg) var(--spacing-xl);
 
-    transition: background-color var(--animation-fast);
+    transition: background-color var(--animation-fast), border-color var(--animation-fast);
 
+    /* Hover só clareia o fundo; a moldura fica reservada ao foco */
     &:hover,
     &:focus {
         background-color: var(--bg-surface);
@@ -361,6 +441,14 @@ p {
     &:focus {
         outline: none;
         box-shadow: none;
+        border-color: var(--accent-hover);
+    }
+
+    /* Inválido vence hover e foco: o aviso não pode sumir enquanto o campo é corrigido */
+    &.is-invalid,
+    &.is-invalid:hover,
+    &.is-invalid:focus {
+        border-color: var(--danger-base);
     }
 
     &:disabled {
@@ -369,41 +457,12 @@ p {
     }
 }
 
-/* Sublinhado animado: repouso, foco e inválido, este último independente do foco */
-
-.form-outline::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: var(--border-width-sm);
-    background-color: var(--border-base);
-
-    transition: background-color var(--animation-fast), height var(--animation-fast);
-}
-
-.form-outline:hover::after {
-    background-color: var(--border-hover);
-}
-
-.form-outline:focus-within::after {
-    background-color: var(--accent-hover);
-    height: var(--border-width-md);
-}
-
-.form-outline:has(.form-control.is-invalid)::after {
-    background-color: var(--danger-base);
-    height: var(--border-width-md);
-}
-
 /*
     Rótulo flutuante: o transform do MDB é preservado, só o recuo sai e o `top` sobe o
     suficiente para o rótulo não encostar no texto do campo preenchido.
 */
 
-.form-outline .form-control ~ .form-label {
+.form-outline .form-control~.form-label {
     font-family: var(--font-family-mono);
     color: var(--text-muted);
 
@@ -413,11 +472,11 @@ p {
     transition: color var(--animation-fast);
 }
 
-.form-outline .form-control:focus ~ .form-label {
+.form-outline .form-control:focus~.form-label {
     color: var(--accent-hover);
 }
 
-.form-outline .form-control.is-invalid ~ .form-label {
+.form-outline .form-control.is-invalid~.form-label {
     color: var(--danger-hover);
 }
 
@@ -465,6 +524,7 @@ p {
 }
 
 .app-tela__descricao {
+    font-style: italic;
     color: var(--text-muted);
 }
 
@@ -487,7 +547,7 @@ p {
 
     background-color: var(--accent-surface);
     border-radius: var(--border-radius-md);
-    color: var(--text-primary);
+    color: var(--text-on-accent);
 
     transition: background-color var(--animation-fast);
 
@@ -502,7 +562,7 @@ p {
 }
 
 /*
-    Busca preenchida e sem moldura, como os campos dos formulários: o sublinhado existe
+    Busca preenchida e sem moldura, como os campos dos formulários: a moldura existe
     transparente em repouso e só ganha o acento no foco, sem deslocar o layout.
 */
 
@@ -515,8 +575,8 @@ p {
     padding: var(--spacing-md) var(--spacing-lg);
 
     background-color: var(--bg-subtle);
-    border-bottom: var(--border-width-sm) solid transparent;
-    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    border: var(--border-width-sm) solid transparent;
+    border-radius: var(--border-radius-md);
     color: var(--text-faint);
 
     transition: background-color var(--animation-fast), border-color var(--animation-fast);
@@ -528,7 +588,7 @@ p {
 
     &:focus-within {
         background-color: var(--bg-surface);
-        border-bottom-color: var(--accent-hover);
+        border-color: var(--accent-hover);
     }
 }
 
@@ -594,7 +654,7 @@ p {
 
 /* O host do componente fica entre o `li` e o cartão, então também estica para alinhar a linha */
 
-.app-grade > li > * {
+.app-grade>li>* {
     display: block;
     height: 100%;
 }
@@ -626,14 +686,22 @@ p {
 
     background-color: var(--bg-surface);
     border-radius: var(--border-radius-lg);
+    opacity: var(--opacity-inactive);
 
-    transition: background-color var(--animation-fast), transform var(--animation-fast);
+    transition: background-color var(--animation-fast), transform var(--animation-fast), opacity var(--animation-fast);
 
-    /* Hover: leve aumento e clareamento do fundo, só para marcar o cartão sob o ponteiro */
+    /* Hover: leve aumento, clareamento do fundo e uma sombra mínima, só para marcar o cartão sob o ponteiro */
     &:hover {
         background-color: var(--bg-elevated);
         transform: scale(1.02);
+        opacity: var(--opacity-visible);
     }
+}
+
+/* No tema claro a sombra vem do texto: a do fundo seria branca sobre branco, ou seja, nenhuma */
+
+[data-theme="light"] .app-cartao:hover {
+    box-shadow: 0 var(--spacing-xs) var(--spacing-lg) color-mix(in srgb, var(--text-primary), transparent 85%);
 }
 
 .app-cartao__cabecalho {
@@ -673,7 +741,7 @@ p {
 .app-cartao__campo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     min-width: 0;
 
     font-size: var(--font-size-xs);

@@ -20,5 +20,4 @@ export const RoutePaths = {
     DASHBOARD_VIEW_ROUTE: ROUTE("dashboard", "view"),
     DASHBOARD_AGENDAMENTOS_ROUTE: ROUTE("dashboard", "agendamentos"),
     DASHBOARD_SERVICOS_ROUTE: ROUTE("dashboard", "servicos"),
-    DASHBOARD_CONFIGURACOES_ROUTE: ROUTE("dashboard", "configuracoes"),
 };

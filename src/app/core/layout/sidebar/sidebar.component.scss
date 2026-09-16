@@ -7,7 +7,11 @@
     - `--animation-instant` fica reservado para retorno de clique ou toque, hoje sem uso.
 */
 
-/* Barra lateral sem moldura: o fundo mais claro é a única costura contra o conteúdo */
+/*
+    Moldura suave com cantos direitos arredondados: exceção explícita à regra de borda só em
+    foco ou estado ativo, restrita a este painel. O lado esquerdo fica reto porque encosta na
+    borda da viewport.
+*/
 
 .app-sidebar {
     flex: none;
@@ -19,10 +23,20 @@
     height: 100vh;
     padding: var(--spacing-2xl) var(--spacing-xl);
 
-    background-color: var(--bg-subtle);
+    background: linear-gradient(90deg, var(--bg-surface), transparent);
+    border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0;
     overflow: hidden;
 
     transition: width var(--animation-medium);
+}
+
+/*
+    No tema claro o mesmo passo relativo cai perto do topo da escala e some: o degrau seguinte
+    da escada (`--bg-elevated`) devolve a faixa sem sair dos tokens existentes.
+*/
+
+[data-theme="light"] .app-sidebar {
+    background: linear-gradient(90deg, var(--bg-elevated), transparent);
 }
 
 .app-sidebar--recolhida {
@@ -38,16 +52,20 @@
     padding: 0 var(--spacing-md);
 }
 
+/* SVG embutido: o `currentColor` dos traços segue esta cor e acompanha a troca de tema */
+
 .app-sidebar__simbolo {
     flex: none;
     width: var(--font-size-lg);
     height: var(--font-size-lg);
+    color: var(--text-primary);
 }
 
 .app-sidebar__logotipo {
     font-family: var(--font-family-display);
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
+    /* Peso literal: o Playfair Display só é carregado em 600 e 700, e `--font-weight-bold` é 800 */
+    font-weight: 700;
     letter-spacing: -0.02em;
     color: var(--text-primary);
     white-space: nowrap;
@@ -69,7 +87,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 
     padding: var(--spacing-lg) var(--spacing-md);
 
@@ -82,8 +100,15 @@
     transition: background-color var(--animation-fast), border-color var(--animation-fast),
         color var(--animation-fast);
 
+    /*
+        Coluna própria e de largura fixa para o ícone: ele se centraliza dentro dela, e não a
+        linha em torno dele, então recolher ou expandir some com o rótulo sem mover o ícone.
+    */
     i {
         flex: none;
+        display: grid;
+        place-items: center;
+
         width: var(--font-size-md);
         font-size: var(--font-size-md);
         line-height: 1;
@@ -154,17 +179,15 @@
     }
 }
 
-/* Recolhida: só os ícones permanecem */
+/*
+    Recolhida: só os ícones permanecem. A linha não se recentra, porque o ícone e o símbolo
+    já ocupam colunas fixas; assim nada se desloca ao recolher ou expandir.
+*/
 
 .app-sidebar--recolhida {
     .app-sidebar__logotipo,
     .app-sidebar__rotulo {
         display: none;
-    }
-
-    .app-sidebar__marca,
-    .app-sidebar__item {
-        justify-content: center;
     }
 
     .app-sidebar__alternar {
@@ -182,11 +205,6 @@
     .app-sidebar__logotipo,
     .app-sidebar__rotulo {
         display: none;
-    }
-
-    .app-sidebar__marca,
-    .app-sidebar__item {
-        justify-content: center;
     }
 
     .app-sidebar__alternar {

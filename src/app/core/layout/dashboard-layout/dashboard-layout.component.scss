@@ -8,13 +8,25 @@
     grid-template-columns: auto 1fr;
     min-height: 100vh;
 
-    background-color: var(--bg-base);
+    /* Gradiente entre os dois tons mais escuros: profundidade sem virar faixa visível */
+    background: linear-gradient(var(--bg-base), var(--bg-surface));
 }
+
+/*
+    No tema claro o mesmo passo relativo cai perto do topo da escala e some: o degrau seguinte
+    da escada (`--bg-elevated`) devolve a faixa sem sair dos tokens existentes.
+*/
+
+[data-theme="light"] .app-dashboard-layout {
+    background: linear-gradient(var(--bg-base), var(--bg-elevated));
+}
+
+/* Respiro vertical amplo e calha menor à esquerda, junto à borda da barra lateral */
 
 .app-dashboard-layout__conteudo {
     min-width: 0;
     overflow-y: auto;
-    padding: var(--spacing-3xl);
+    padding: var(--spacing-4xl) var(--spacing-3xl) var(--spacing-4xl) var(--spacing-xl);
 }
 
 @media (max-width: 48rem) {
