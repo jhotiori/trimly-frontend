@@ -3,20 +3,15 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
 import { debounceTime } from "rxjs";
+import { BuscaConfig } from "../../../../core/config/busca.config";
+import { Formats } from "../../../../core/config/formats.config";
+import { ModalConfig } from "../../../../core/config/modal.config";
+import { normalizeTexto } from "../../../../core/utils/texto.util";
 import { AuthStore } from "../../../auth/services/auth.store";
 import { AgendamentoStatus } from "../../models/agendamento-status.enum";
 import { AgendamentoStore, type AgendamentoView } from "../../services/agendamento.store";
 import { AgendamentoFormComponent } from "../agendamento-form/agendamento-form.component";
 import { AgendamentoListComponent } from "../agendamento-list/agendamento-list.component";
-
-/** Configuração aplicada ao modal de criação aberto pela tela. */
-const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
-
-/** Espera, em milissegundos, entre a última tecla e a aplicação da busca. */
-const DEBOUNCE_BUSCA = 500;
-
-/** Formatador do dia da semana por extenso, usado na busca por dia. */
-const FORMATO_DIA = new Intl.DateTimeFormat("pt-BR", { weekday: "long" });
 
 /** Campos sobre os quais a busca de agendamentos pode ser aplicada. */
 type CampoBusca = "usuario" | "servico" | "diaSemana";
@@ -32,21 +27,8 @@ const OPCOES_BUSCA: { campo: CampoBusca; rotulo: string }[] = [
 const VALOR_BUSCA: Record<CampoBusca, (agendamento: AgendamentoView) => string> = {
     usuario: (agendamento) => agendamento.usuarioNome,
     servico: (agendamento) => agendamento.servicoNome,
-    diaSemana: (agendamento) => FORMATO_DIA.format(new Date(agendamento.data)),
+    diaSemana: (agendamento) => Formats.DIA_SEMANA.format(new Date(agendamento.data)),
 };
-
-/**
- * Normaliza um texto para a busca, ignorando maiúsculas e acentos.
- *
- * @param texto - Texto a ser normalizado.
- * @returns O texto em minúsculas e sem diacríticos.
- */
-function normalizeTexto(texto: string): string {
-    return texto
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase();
-}
 
 /**
  * Tela de agendamentos: a grade dos `AGENDADO`, a busca local e a ação de criação.
@@ -90,7 +72,7 @@ export class AgendamentoScreenComponent {
     );
 
     /** Texto da busca, aplicado só depois de uma pausa na digitação. */
-    private readonly termo = toSignal(this.busca.valueChanges.pipe(debounceTime(DEBOUNCE_BUSCA)), {
+    private readonly termo = toSignal(this.busca.valueChanges.pipe(debounceTime(BuscaConfig.DEBOUNCE)), {
         initialValue: "",
     });
 
@@ -123,6 +105,6 @@ export class AgendamentoScreenComponent {
      * Abre o modal de criação de agendamento.
      */
     openAgendamentoForm(): void {
-        this.modalService.open(AgendamentoFormComponent, CONFIG_MODAL);
+        this.modalService.open(AgendamentoFormComponent, ModalConfig);
     }
 }

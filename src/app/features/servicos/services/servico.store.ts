@@ -1,6 +1,7 @@
 import type { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject, signal } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
+import { ErrorMessages } from "../../../core/config/messages.config";
 import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
 import type { ServicoCreateDTO } from "../models/servico-create.dto";
 import type { ServicoResponseDTO } from "../models/servico-response.dto";
@@ -25,14 +26,14 @@ export class ServicoStore {
     private readonly alertService = inject(AlertService);
 
     /** Lista interna de serviços, substituída por inteiro a cada alteração. */
-    private readonly state = signal<ServicoResponseDTO[]>([]);
+    private readonly servicosState = signal<ServicoResponseDTO[]>([]);
 
     /** Lista somente leitura dos serviços atuais. */
-    readonly servicos = this.state.asReadonly();
+    readonly servicos = this.servicosState.asReadonly();
 
     constructor() {
         this.service.findAll().subscribe({
-            next: (servicos) => this.state.set(servicos),
+            next: (servicos) => this.servicosState.set(servicos),
             error: () => {},
         });
     }
@@ -49,9 +50,9 @@ export class ServicoStore {
      */
     add(request: ServicoCreateDTO): Observable<ServicoResponseDTO | null> {
         return this.service.create(request).pipe(
-            tap((servico) => this.state.update((servicos) => [...servicos, servico])),
+            tap((servico) => this.servicosState.update((servicos) => [...servicos, servico])),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível criar o serviço."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.SERVICO_CREATE));
                 return of(null);
             }),
         );
@@ -71,10 +72,12 @@ export class ServicoStore {
     update(id: number, request: ServicoUpdateDTO): Observable<ServicoResponseDTO | null> {
         return this.service.update(id, request).pipe(
             tap((atualizado) =>
-                this.state.update((servicos) => servicos.map((servico) => (servico.id === id ? atualizado : servico))),
+                this.servicosState.update((servicos) =>
+                    servicos.map((servico) => (servico.id === id ? atualizado : servico)),
+                ),
             ),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível atualizar o serviço."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.SERVICO_UPDATE));
                 return of(null);
             }),
         );
@@ -87,7 +90,7 @@ export class ServicoStore {
      * @returns O serviço encontrado, ou `undefined` quando não existe.
      */
     findById(id: number): ServicoResponseDTO | undefined {
-        return this.state().find((servico) => servico.id === id);
+        return this.servicosState().find((servico) => servico.id === id);
     }
 
     /**
@@ -102,10 +105,10 @@ export class ServicoStore {
      */
     remove(id: number): Observable<boolean> {
         return this.service.deleteById(id).pipe(
-            tap(() => this.state.update((servicos) => servicos.filter((servico) => servico.id !== id))),
+            tap(() => this.servicosState.update((servicos) => servicos.filter((servico) => servico.id !== id))),
             map(() => true),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível remover o serviço."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.SERVICO_REMOVE));
                 return of(false);
             }),
         );

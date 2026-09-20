@@ -1,17 +1,20 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, type OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 import { MdbModalRef } from "mdb-angular-ui-kit/modal";
 
 import { EnumLabelPipe } from "../../../../core/pipes/enum-label.pipe";
 import { DiaSemana } from "../../models/dia-semana.enum";
+import type { DisponibilidadeResponseDTO } from "../../models/disponibilidade-response.dto";
 import { DisponibilidadeStore } from "../../services/disponibilidade.store";
 
 /**
  * Formulário de disponibilidade exibido dentro de um modal do MDB.
  *
- * Cria a janela de atendimento de um dia da semana. O modal só fecha quando o backend
- * aceita, então uma recusa mantém o formulário como está.
+ * Serve à criação e à edição: sem uma disponibilidade recebida cria a janela de atendimento
+ * de um dia da semana, com uma disponibilidade recebida preenche os campos e atualiza aquele
+ * id. O modal só fecha quando o backend aceita, então uma recusa mantém o formulário como
+ * está.
  */
 @Component({
     selector: "app-disponibilidade-form",
@@ -19,7 +22,7 @@ import { DisponibilidadeStore } from "../../services/disponibilidade.store";
     templateUrl: "./disponibilidade-form.component.html",
     styleUrl: "./disponibilidade-form.component.scss",
 })
-export class DisponibilidadeFormComponent {
+export class DisponibilidadeFormComponent implements OnInit {
     /**
      * Construtor de formulários reativos.
      * @see {@link FormBuilder}
@@ -27,7 +30,7 @@ export class DisponibilidadeFormComponent {
     private readonly builder = inject(FormBuilder);
 
     /**
-     * Loja reativa das disponibilidades, usada para criar o registro.
+     * Loja reativa das disponibilidades, usada para criar e atualizar o registro.
      * @see {@link DisponibilidadeStore}
      */
     private readonly store = inject(DisponibilidadeStore);
@@ -37,6 +40,9 @@ export class DisponibilidadeFormComponent {
      * @see {@link MdbModalRef}
      */
     private readonly modalRef = inject(MdbModalRef<DisponibilidadeFormComponent>);
+
+    /** Disponibilidade em edição, atribuída pelo `data` do modal. Ausente na criação. */
+    disponibilidade?: DisponibilidadeResponseDTO;
 
     /** Dias da semana que podem receber uma disponibilidade. */
     readonly diasDisponiveis = Object.values(DiaSemana);
@@ -52,7 +58,36 @@ export class DisponibilidadeFormComponent {
     });
 
     /**
-     * Cria a disponibilidade quando o formulário está válido.
+     * Indica se o formulário está editando uma disponibilidade existente.
+     *
+     * @returns `true` quando uma disponibilidade foi recebida pelo `data` do modal.
+     */
+    get isEditing(): boolean {
+        return this.disponibilidade !== undefined;
+    }
+
+    /**
+     * Preenche o formulário quando uma disponibilidade é recebida para edição.
+     *
+     * Os horários chegam da API com os segundos, recortados aqui para o formato `HH:mm` que
+     * os campos de hora aceitam.
+     */
+    ngOnInit(): void {
+        const disponibilidade = this.disponibilidade;
+
+        if (!disponibilidade) {
+            return;
+        }
+
+        this.form.patchValue({
+            diaSemana: disponibilidade.diaSemana,
+            horaInicio: disponibilidade.horaInicio.slice(0, 5),
+            horaFim: disponibilidade.horaFim.slice(0, 5),
+        });
+    }
+
+    /**
+     * Cria ou atualiza a disponibilidade quando o formulário está válido.
      *
      * O modal só fecha quando o backend aceita a operação; qualquer recusa já foi reportada
      * pela loja e deixa o formulário intacto. Um envio inválido é bloqueado e apenas revela
@@ -67,8 +102,19 @@ export class DisponibilidadeFormComponent {
         }
 
         const { diaSemana, horaInicio, horaFim } = this.form.getRawValue();
+        const disponibilidade = this.disponibilidade;
 
         if (!diaSemana) {
+            return;
+        }
+
+        if (disponibilidade) {
+            this.store.update(disponibilidade.id, { diaSemana, horaInicio, horaFim }).subscribe((atualizada) => {
+                if (atualizada) {
+                    this.close();
+                }
+            });
+
             return;
         }
 

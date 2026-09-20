@@ -3,29 +3,13 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
 import { debounceTime } from "rxjs";
+import { BuscaConfig } from "../../../../core/config/busca.config";
+import { ModalConfig } from "../../../../core/config/modal.config";
+import { normalizeTexto } from "../../../../core/utils/texto.util";
 import { AuthStore } from "../../../auth/services/auth.store";
 import { ServicoStore } from "../../services/servico.store";
 import { ServicoFormComponent } from "../servico-form/servico-form.component";
 import { ServicoListComponent } from "../servico-list/servico-list.component";
-
-/** Configuração aplicada ao modal de criação aberto pela tela. */
-const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
-
-/** Espera, em milissegundos, entre a última tecla e a aplicação da busca. */
-const DEBOUNCE_BUSCA = 500;
-
-/**
- * Normaliza um texto para a busca, ignorando maiúsculas e acentos.
- *
- * @param texto - Texto a ser normalizado.
- * @returns O texto em minúsculas e sem diacríticos.
- */
-function normalizeTexto(texto: string): string {
-    return texto
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase();
-}
 
 /**
  * Tela de serviços: a grade de todos os serviços, a busca local pelo nome e a ação de
@@ -62,7 +46,7 @@ export class ServicoScreenComponent {
     readonly busca = new FormControl("", { nonNullable: true });
 
     /** Texto da busca, aplicado só depois de uma pausa na digitação. */
-    private readonly termo = toSignal(this.busca.valueChanges.pipe(debounceTime(DEBOUNCE_BUSCA)), {
+    private readonly termo = toSignal(this.busca.valueChanges.pipe(debounceTime(BuscaConfig.DEBOUNCE)), {
         initialValue: "",
     });
 
@@ -77,6 +61,6 @@ export class ServicoScreenComponent {
      * Abre o modal de criação de serviço.
      */
     openServicoForm(): void {
-        this.modalService.open(ServicoFormComponent, CONFIG_MODAL);
+        this.modalService.open(ServicoFormComponent, ModalConfig);
     }
 }
