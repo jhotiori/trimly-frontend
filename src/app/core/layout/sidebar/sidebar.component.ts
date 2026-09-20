@@ -4,11 +4,9 @@ import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
 
 import { AuthStore } from "../../../features/auth/services/auth.store";
 import { DisponibilidadeFormComponent } from "../../../features/disponibilidades/components/disponibilidade-form/disponibilidade-form.component";
+import { ModalConfig } from "../../config/modal.config";
 import { RoutePaths } from "../../config/route-paths.config";
 import { ThemeService } from "../../services/theme.service";
-
-/** Configuração aplicada ao modal aberto pela barra lateral. */
-const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
 
 /**
  * Barra lateral de navegação do painel, com recolhimento e a criação de disponibilidades.
@@ -61,7 +59,7 @@ export class SidebarComponent {
      * Abre o modal de criação de disponibilidade.
      */
     openDisponibilidadeForm(): void {
-        this.modalService.open(DisponibilidadeFormComponent, CONFIG_MODAL);
+        this.modalService.open(DisponibilidadeFormComponent, ModalConfig);
     }
 
     /**

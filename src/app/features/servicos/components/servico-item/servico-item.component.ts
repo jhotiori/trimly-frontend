@@ -1,17 +1,13 @@
 import { Component, Input, inject } from "@angular/core";
 import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
 
+import { Formats } from "../../../../core/config/formats.config";
+import { ModalConfig } from "../../../../core/config/modal.config";
 import { AlertService } from "../../../../core/services/alert.service";
 import { AuthStore } from "../../../auth/services/auth.store";
 import type { ServicoResponseDTO } from "../../models/servico-response.dto";
 import { ServicoStore } from "../../services/servico.store";
 import { ServicoFormComponent } from "../servico-form/servico-form.component";
-
-/** Formatador de valores monetários em real. */
-const FORMATO_PRECO = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-
-/** Configuração aplicada ao modal de edição aberto pelo item. */
-const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
 
 /**
  * Cartão de um único serviço com nome, valor e duração.
@@ -58,7 +54,7 @@ export class ServicoItemComponent {
      * @returns O valor com o símbolo da moeda.
      */
     formatPreco(valor: number): string {
-        return FORMATO_PRECO.format(valor);
+        return Formats.PRECO.format(valor);
     }
 
     /**
@@ -66,7 +62,7 @@ export class ServicoItemComponent {
      */
     edit(): void {
         this.modalService.open(ServicoFormComponent, {
-            ...CONFIG_MODAL,
+            ...ModalConfig,
             data: { servico: this.servico },
         });
     }

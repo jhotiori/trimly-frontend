@@ -1,6 +1,7 @@
 import type { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject, signal } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
+import { ErrorMessages } from "../../../core/config/messages.config";
 import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
 import type { UsuarioCreateDTO } from "../models/usuario-create.dto";
 import type { UsuarioResponseDTO } from "../models/usuario-response.dto";
@@ -24,14 +25,14 @@ export class UsuarioStore {
     private readonly alertService = inject(AlertService);
 
     /** Lista interna de usuários, substituída por inteiro a cada alteração. */
-    private readonly state = signal<UsuarioResponseDTO[]>([]);
+    private readonly usuariosState = signal<UsuarioResponseDTO[]>([]);
 
     /** Lista somente leitura dos usuários atuais. */
-    readonly usuarios = this.state.asReadonly();
+    readonly usuarios = this.usuariosState.asReadonly();
 
     constructor() {
         this.service.findAll().subscribe({
-            next: (usuarios) => this.state.set(usuarios),
+            next: (usuarios) => this.usuariosState.set(usuarios),
             error: () => {},
         });
     }
@@ -48,9 +49,9 @@ export class UsuarioStore {
      */
     register(request: UsuarioCreateDTO): Observable<UsuarioResponseDTO | null> {
         return this.service.create(request).pipe(
-            tap((usuario) => this.state.update((usuarios) => [...usuarios, usuario])),
+            tap((usuario) => this.usuariosState.update((usuarios) => [...usuarios, usuario])),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível criar a conta."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.USUARIO_REGISTER));
                 return of(null);
             }),
         );
