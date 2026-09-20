@@ -1,6 +1,7 @@
 import type { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject, signal } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
+import { ErrorMessages } from "../../../core/config/messages.config";
 import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
 import type { DisponibilidadeCreateDTO } from "../models/disponibilidade-create.dto";
 import type { DisponibilidadeResponseDTO } from "../models/disponibilidade-response.dto";
@@ -25,14 +26,14 @@ export class DisponibilidadeStore {
     private readonly alertService = inject(AlertService);
 
     /** Lista interna de disponibilidades, substituída por inteiro a cada alteração. */
-    private readonly state = signal<DisponibilidadeResponseDTO[]>([]);
+    private readonly disponibilidadesState = signal<DisponibilidadeResponseDTO[]>([]);
 
     /** Lista somente leitura das disponibilidades atuais. */
-    readonly disponibilidades = this.state.asReadonly();
+    readonly disponibilidades = this.disponibilidadesState.asReadonly();
 
     constructor() {
         this.service.findAll().subscribe({
-            next: (disponibilidades) => this.state.set(disponibilidades),
+            next: (disponibilidades) => this.disponibilidadesState.set(disponibilidades),
             error: () => {},
         });
     }
@@ -49,9 +50,11 @@ export class DisponibilidadeStore {
      */
     add(request: DisponibilidadeCreateDTO): Observable<DisponibilidadeResponseDTO | null> {
         return this.service.create(request).pipe(
-            tap((disponibilidade) => this.state.update((disponibilidades) => [...disponibilidades, disponibilidade])),
+            tap((disponibilidade) =>
+                this.disponibilidadesState.update((disponibilidades) => [...disponibilidades, disponibilidade]),
+            ),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível criar a disponibilidade."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.DISPONIBILIDADE_CREATE));
                 return of(null);
             }),
         );
@@ -71,14 +74,14 @@ export class DisponibilidadeStore {
     update(id: number, request: DisponibilidadeUpdateDTO): Observable<DisponibilidadeResponseDTO | null> {
         return this.service.update(id, request).pipe(
             tap((atualizada) =>
-                this.state.update((disponibilidades) =>
+                this.disponibilidadesState.update((disponibilidades) =>
                     disponibilidades.map((disponibilidade) =>
                         disponibilidade.id === id ? atualizada : disponibilidade,
                     ),
                 ),
             ),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível atualizar a disponibilidade."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.DISPONIBILIDADE_UPDATE));
                 return of(null);
             }),
         );
@@ -91,7 +94,7 @@ export class DisponibilidadeStore {
      * @returns A disponibilidade encontrada, ou `undefined` quando não existe.
      */
     findById(id: number): DisponibilidadeResponseDTO | undefined {
-        return this.state().find((disponibilidade) => disponibilidade.id === id);
+        return this.disponibilidadesState().find((disponibilidade) => disponibilidade.id === id);
     }
 
     /**
@@ -107,13 +110,13 @@ export class DisponibilidadeStore {
     remove(id: number): Observable<boolean> {
         return this.service.deleteById(id).pipe(
             tap(() =>
-                this.state.update((disponibilidades) =>
+                this.disponibilidadesState.update((disponibilidades) =>
                     disponibilidades.filter((disponibilidade) => disponibilidade.id !== id),
                 ),
             ),
             map(() => true),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível remover a disponibilidade."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.DISPONIBILIDADE_REMOVE));
                 return of(false);
             }),
         );

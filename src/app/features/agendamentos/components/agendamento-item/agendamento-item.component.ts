@@ -1,19 +1,12 @@
 import { Component, Input, inject, signal } from "@angular/core";
 import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
+import { Formats } from "../../../../core/config/formats.config";
+import { ModalConfig } from "../../../../core/config/modal.config";
 import { AlertService } from "../../../../core/services/alert.service";
 import { AuthStore } from "../../../auth/services/auth.store";
 import { AgendamentoStatus } from "../../models/agendamento-status.enum";
 import { AgendamentoStore, type AgendamentoView } from "../../services/agendamento.store";
 import { AgendamentoFormComponent } from "../agendamento-form/agendamento-form.component";
-
-/** Formatador de data e hora no padrão brasileiro. */
-const FORMATO_DATA = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" });
-
-/** Formatador de valores monetários em real. */
-const FORMATO_PRECO = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-
-/** Configuração aplicada ao modal de edição aberto pelo item. */
-const CONFIG_MODAL = { modalClass: "modal-dialog-centered" };
 
 /**
  * Cartão de um único agendamento e as ações permitidas a quem está na sessão.
@@ -65,7 +58,7 @@ export class AgendamentoItemComponent {
      * @returns A data e o horário legíveis.
      */
     formatData(data: string): string {
-        return FORMATO_DATA.format(new Date(data));
+        return Formats.DATA_HORA.format(new Date(data));
     }
 
     /**
@@ -75,7 +68,7 @@ export class AgendamentoItemComponent {
      * @returns O valor com o símbolo da moeda.
      */
     formatPreco(valor: number): string {
-        return FORMATO_PRECO.format(valor);
+        return Formats.PRECO.format(valor);
     }
 
     /**
@@ -112,7 +105,7 @@ export class AgendamentoItemComponent {
         this.isMenuAberto.set(false);
 
         this.modalService.open(AgendamentoFormComponent, {
-            ...CONFIG_MODAL,
+            ...ModalConfig,
             data: { agendamento: this.agendamento },
         });
     }

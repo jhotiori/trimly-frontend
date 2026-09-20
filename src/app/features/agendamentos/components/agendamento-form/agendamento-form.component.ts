@@ -79,10 +79,10 @@ export class AgendamentoFormComponent implements OnInit {
     readonly submitted = signal(false);
 
     /** Menor data aceita pelo campo de data: hoje, no formato `yyyy-MM-dd`. */
-    readonly dataMinima = this.getDataIso(0);
+    readonly dataMinima = this.computeDataIso(0);
 
     /** Maior data aceita pelo campo de data: hoje mais 14 dias, no formato `yyyy-MM-dd`. */
-    readonly dataMaxima = this.getDataIso(14);
+    readonly dataMaxima = this.computeDataIso(14);
 
     /** Campos do agendamento. */
     readonly form = this.builder.nonNullable.group({
@@ -205,7 +205,7 @@ export class AgendamentoFormComponent implements OnInit {
      * @param dias - Quantidade de dias a somar ao dia atual.
      * @returns A data no formato `yyyy-MM-dd`, no fuso local.
      */
-    private getDataIso(dias: number): string {
+    private computeDataIso(dias: number): string {
         const data = new Date();
         data.setDate(data.getDate() + dias);
 

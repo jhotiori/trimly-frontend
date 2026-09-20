@@ -1,6 +1,8 @@
 import type { HttpErrorResponse } from "@angular/common/http";
 import { computed, Injectable, inject, signal } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
+import { ErrorMessages } from "../../../core/config/messages.config";
+import { Placeholders } from "../../../core/config/placeholders.config";
 import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
 import { ServicoStore } from "../../servicos/services/servico.store";
 import { UsuarioStore } from "../../usuarios/services/usuario.store";
@@ -20,12 +22,6 @@ export type AgendamentoView = AgendamentoResponseDTO & {
     servicoPreco: number;
     usuarioNome: string;
 };
-
-/** Texto exibido quando o serviço de um agendamento não está mais na lista. */
-const SERVICO_REMOVIDO = "[removido]";
-
-/** Texto exibido quando o cliente de um agendamento não está mais na lista. */
-const CLIENTE_REMOVIDO = "[removido]";
 
 /**
  * Loja reativa dos agendamentos, servida pela API.
@@ -58,29 +54,29 @@ export class AgendamentoStore {
     private readonly alertService = inject(AlertService);
 
     /** Lista interna de agendamentos, substituída por inteiro a cada alteração. */
-    private readonly state = signal<AgendamentoResponseDTO[]>([]);
+    private readonly agendamentosState = signal<AgendamentoResponseDTO[]>([]);
 
     /** Lista somente leitura dos agendamentos atuais, já com serviço e cliente resolvidos. */
     readonly agendamentos = computed<AgendamentoView[]>(() => {
         const servicos = new Map(this.servicoStore.servicos().map((servico) => [servico.id, servico]));
         const usuarios = new Map(this.usuarioStore.usuarios().map((usuario) => [usuario.id, usuario]));
 
-        return this.state().map((agendamento) => {
+        return this.agendamentosState().map((agendamento) => {
             const servico = servicos.get(agendamento.servicoId);
             const usuario = usuarios.get(agendamento.usuarioId);
 
             return {
                 ...agendamento,
-                servicoNome: servico?.nome ?? SERVICO_REMOVIDO,
+                servicoNome: servico?.nome ?? Placeholders.REMOVIDO,
                 servicoPreco: servico?.valor ?? 0,
-                usuarioNome: usuario?.nome ?? CLIENTE_REMOVIDO,
+                usuarioNome: usuario?.nome ?? Placeholders.REMOVIDO,
             };
         });
     });
 
     constructor() {
         this.service.findAll().subscribe({
-            next: (agendamentos) => this.state.set(agendamentos),
+            next: (agendamentos) => this.agendamentosState.set(agendamentos),
             error: () => {},
         });
     }
@@ -99,9 +95,9 @@ export class AgendamentoStore {
      */
     add(request: AgendamentoCreateDTO): Observable<AgendamentoResponseDTO | null> {
         return this.service.create(request).pipe(
-            tap((agendamento) => this.state.update((agendamentos) => [...agendamentos, agendamento])),
+            tap((agendamento) => this.agendamentosState.update((agendamentos) => [...agendamentos, agendamento])),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível criar o agendamento."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.AGENDAMENTO_CREATE));
                 return of(null);
             }),
         );
@@ -121,12 +117,12 @@ export class AgendamentoStore {
     update(id: number, request: AgendamentoUpdateDTO): Observable<AgendamentoResponseDTO | null> {
         return this.service.update(id, request).pipe(
             tap((atualizado) =>
-                this.state.update((agendamentos) =>
+                this.agendamentosState.update((agendamentos) =>
                     agendamentos.map((agendamento) => (agendamento.id === id ? atualizado : agendamento)),
                 ),
             ),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível atualizar o agendamento."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.AGENDAMENTO_UPDATE));
                 return of(null);
             }),
         );
@@ -144,10 +140,14 @@ export class AgendamentoStore {
      */
     remove(id: number): Observable<boolean> {
         return this.service.deleteById(id).pipe(
-            tap(() => this.state.update((agendamentos) => agendamentos.filter((agendamento) => agendamento.id !== id))),
+            tap(() =>
+                this.agendamentosState.update((agendamentos) =>
+                    agendamentos.filter((agendamento) => agendamento.id !== id),
+                ),
+            ),
             map(() => true),
             catchError((err: HttpErrorResponse) => {
-                this.alertService.error(extractErrorMessage(err, "Não foi possível remover o agendamento."));
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.AGENDAMENTO_REMOVE));
                 return of(false);
             }),
         );
