@@ -27,14 +27,16 @@ node_modules/
 !.env.example
 
 # =========================
-# AI (Artifacts, Settings)
+# AI & tooling (artifacts, settings, indexes)
 # =========================
 
 .claude/*
-!.claude/specs
-.agents
+!.claude/rules/
+.agents/
+.serena/
+.codegraph/
+.memsearch/
 openspec/
-graphify-out/
 
 # =========================
 # IDEs & Editors
@@ -45,24 +47,12 @@ graphify-out/
 *.iws
 *.ipr
 
-.project
-.classpath
-.factorypath
-.settings/
-.apt_generated
-.springBeans
-.sts4-cache
-
 .c9/
 *.launch
 *.sublime-workspace
 
-# VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Track shared workspace settings, even when a global gitignore hides them.
+!.vscode/
 
 .history/
 
@@ -70,12 +60,9 @@ graphify-out/
 # Logs & temporary files
 # =========================
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-testem.log
 *.log
-
+logs/
+testem.log
 /connect.lock
 /libpeerconnection.log
 
