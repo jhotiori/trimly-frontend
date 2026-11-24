@@ -1,11 +1,12 @@
+/*
+    Grade de cartões de agendamento, com estado vazio quando a lista não tem itens.
+*/
+
 import { Component, Input } from "@angular/core";
 
 import type { AgendamentoView } from "../../services/agendamento.store";
 import { AgendamentoItemComponent } from "../agendamento-item/agendamento-item.component";
 
-/**
- * Exibe os agendamentos em uma grade de cartões, ou um estado vazio quando não há nenhum.
- */
 @Component({
     selector: "app-agendamento-list",
     imports: [AgendamentoItemComponent],

@@ -1,30 +1,40 @@
-import { computed, Injectable, inject, signal } from "@angular/core";
-import { map, type Observable, tap } from "rxjs";
+/*
+    Sessão do usuário em memória: token, usuário atual, login, cadastro e logout.
+*/
 
+import type { HttpErrorResponse } from "@angular/common/http";
+import { computed, Injectable, inject, signal } from "@angular/core";
+import { catchError, map, type Observable, of, tap } from "rxjs";
+
+import { ErrorMessages } from "../../../infra/config/messages.config";
+import { AlertService, extractErrorMessage } from "../../../infra/services/alert.service";
+import type { AuthResponseDTO } from "../../usuarios/models/auth-response.dto";
 import { UsuarioCargo } from "../../usuarios/models/usuario-cargo.enum";
 import type { UsuarioCreateDTO } from "../../usuarios/models/usuario-create.dto";
 import type { UsuarioResponseDTO } from "../../usuarios/models/usuario-response.dto";
-import { UsuarioStore } from "../../usuarios/services/usuario.store";
+import { UsuarioService } from "../../usuarios/services/usuario.service";
 
-/**
- * Sessão do cliente, mantida apenas em memória.
- *
- * Guarda o usuário autenticado em um signal e resolve as credenciais contra o diretório
- * HTTP de usuários. Não há persistência: recarregar a página esvazia a sessão e devolve o
- * visitante ao `/login`.
- */
 @Injectable({
     providedIn: "root",
 })
 export class AuthStore {
-    /** Diretório de usuários usado para resolver as credenciais. */
-    private readonly usuarioStore = inject(UsuarioStore);
+    /** Serviço HTTP de usuários, que expõe o login e o cadastro. */
+    private readonly usuarioService = inject(UsuarioService);
+
+    /** Superfície de diálogos usada para reportar a recusa do cadastro. */
+    private readonly alertService = inject(AlertService);
 
     /** Usuário da sessão atual, ou `null` quando ninguém está autenticado. */
     private readonly sessao = signal<UsuarioResponseDTO | null>(null);
 
+    /** Token JWT da sessão atual, ou `null` quando ninguém está autenticado. */
+    private readonly tokenState = signal<string | null>(null);
+
     /** Usuário autenticado no momento, somente leitura. */
     readonly usuarioAtual = this.sessao.asReadonly();
+
+    /** Token JWT enviado ao backend, somente leitura. */
+    readonly token = this.tokenState.asReadonly();
 
     /**
      * Indica se existe um usuário autenticado.
@@ -35,9 +45,7 @@ export class AuthStore {
 
     /**
      * Indica se o usuário da sessão administra a barbearia, com cargo `ADMIN` ou `DONO`.
-     *
-     * É apenas um controle de experiência: o backend libera todas as rotas, então isso não
-     * é uma fronteira de segurança.
+     * É apenas um controle de experiência: quem garante o acesso é o backend.
      *
      * @returns `true` para `ADMIN` e `DONO`, `false` para `CLIENTE` ou sem sessão.
      */
@@ -59,13 +67,10 @@ export class AuthStore {
      * ```
      */
     login(email: string, senha: string): Observable<boolean> {
-        return this.usuarioStore.login(email, senha).pipe(
-            tap((usuario) => {
-                if (usuario) {
-                    this.sessao.set(usuario);
-                }
-            }),
-            map((usuario) => usuario !== null),
+        return this.usuarioService.login({ email, senha }).pipe(
+            tap((resposta) => this.open(resposta)),
+            map(() => true),
+            catchError(() => of(false)),
         );
     }
 
@@ -76,11 +81,12 @@ export class AuthStore {
      * @returns O usuário criado e autenticado, ou `null` quando o backend recusa o cadastro.
      */
     register(request: UsuarioCreateDTO): Observable<UsuarioResponseDTO | null> {
-        return this.usuarioStore.register(request).pipe(
-            tap((usuario) => {
-                if (usuario) {
-                    this.sessao.set(usuario);
-                }
+        return this.usuarioService.register(request).pipe(
+            tap((resposta) => this.open(resposta)),
+            map((resposta) => resposta.usuario),
+            catchError((err: HttpErrorResponse) => {
+                this.alertService.error(extractErrorMessage(err, ErrorMessages.USUARIO_REGISTER));
+                return of(null);
             }),
         );
     }
@@ -90,5 +96,16 @@ export class AuthStore {
      */
     logout(): void {
         this.sessao.set(null);
+        this.tokenState.set(null);
+    }
+
+    /**
+     * Abre a sessão com o usuário e o token devolvidos pelo backend.
+     *
+     * @param resposta - Resposta do login ou do cadastro.
+     */
+    private open(resposta: AuthResponseDTO): void {
+        this.tokenState.set(resposta.token);
+        this.sessao.set(resposta.usuario);
     }
 }

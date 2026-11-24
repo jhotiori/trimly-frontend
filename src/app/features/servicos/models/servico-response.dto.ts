@@ -1,3 +1,7 @@
+/*
+    Serviço como a API o devolve.
+*/
+
 import type { ServicoStatus } from "./servico-status.enum";
 
 /**

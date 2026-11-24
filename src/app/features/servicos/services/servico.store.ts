@@ -1,26 +1,30 @@
+/*
+    Estado reativo dos serviços, recarregado a cada sessão.
+*/
+
 import type { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject, signal } from "@angular/core";
+import { effect, Injectable, inject, signal, untracked } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
-import { ErrorMessages } from "../../../core/config/messages.config";
-import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
+import { ErrorMessages } from "../../../infra/config/messages.config";
+import { AlertService, extractErrorMessage } from "../../../infra/services/alert.service";
+import { AuthStore } from "../../auth/services/auth.store";
 import type { ServicoCreateDTO } from "../models/servico-create.dto";
 import type { ServicoResponseDTO } from "../models/servico-response.dto";
 import type { ServicoUpdateDTO } from "../models/servico-update.dto";
 import { ServicoService } from "./servico.service";
 
-/**
- * Loja reativa dos serviços, servida pela API.
- *
- * Mantém a lista em um signal e delega toda leitura e escrita ao `ServicoService`. O signal
- * só muda depois que a resposta HTTP chega, então uma recusa do backend deixa a lista
- * intacta e mostra a mensagem original em um diálogo.
- */
 @Injectable({
     providedIn: "root",
 })
 export class ServicoStore {
     /** Serviço HTTP de serviços. */
     private readonly service = inject(ServicoService);
+
+    /**
+     * Sessão do usuário, cuja abertura recarrega a lista e cujo encerramento a esvazia.
+     * {@link AuthStore}
+     */
+    private readonly authStore = inject(AuthStore);
 
     /** Superfície de diálogos usada para reportar as recusas do backend. */
     private readonly alertService = inject(AlertService);
@@ -32,6 +36,20 @@ export class ServicoStore {
     readonly servicos = this.servicosState.asReadonly();
 
     constructor() {
+        // Cada sessão recarrega a lista, e o logout a esvazia para o próximo usuário.
+        effect(() => {
+            if (this.authStore.token()) {
+                untracked(() => this.load());
+            } else {
+                this.servicosState.set([]);
+            }
+        });
+    }
+
+    /**
+     * Recarrega a lista a partir da API. Uma falha, como o `403` de um `CLIENTE`, mantém a lista atual.
+     */
+    load(): void {
         this.service.findAll().subscribe({
             next: (servicos) => this.servicosState.set(servicos),
             error: () => {},

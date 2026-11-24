@@ -1,3 +1,7 @@
+/*
+    Agendamento como a API o devolve.
+*/
+
 import type { AgendamentoStatus } from "./agendamento-status.enum";
 
 /**

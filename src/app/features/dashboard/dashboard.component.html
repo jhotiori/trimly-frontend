@@ -1,4 +1,4 @@
-<div class="app-tela">
+<section class="app-tela">
     <header class="app-tela__cabecalho">
         <h1 class="app-tela__titulo">Bem-vindo(a), {{ authStore.usuarioAtual()?.nome }}.</h1>
         <p class="app-tela__descricao">Aqui está a agenda da nossa semana.</p>
@@ -17,4 +17,4 @@
         </header>
         <app-disponibilidade-list [disponibilidades]="disponibilidades()" />
     </section>
-</div>
+</section>

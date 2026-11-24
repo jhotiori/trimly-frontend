@@ -1,3 +1,7 @@
+/*
+    Payload de atualização parcial (PATCH) de usuário.
+*/
+
 import type { UsuarioCargo } from "./usuario-cargo.enum";
 
 /**

@@ -1,7 +1,7 @@
 <div class="modal-header app-agendamento-form__cabecalho">
-    <h5 class="modal-title app-agendamento-form__titulo">
+    <h2 class="modal-title app-agendamento-form__titulo">
         {{ isEditing ? "Editar Agendamento" : "Novo Agendamento" }}
-    </h5>
+    </h2>
     <button (click)="close()" aria-label="Fechar" class="app-agendamento-form__fechar" type="button">
         <i aria-hidden="true" class="ti ti-x"></i>
     </button>
@@ -80,7 +80,7 @@
         }
 
         @if (submitted() && form.invalid) {
-            <p class="app-agendamento-form__erro">
+            <p class="app-agendamento-form__erro" role="alert">
                 <i aria-hidden="true" class="ti ti-alert-triangle"></i>
                 Preencha todos os campos para agendar.
             </p>

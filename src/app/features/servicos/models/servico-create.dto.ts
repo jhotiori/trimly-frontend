@@ -1,3 +1,7 @@
+/*
+    Payload de criação de serviço enviado à API.
+*/
+
 /**
  * Dados necessários para criar um serviço.
  */

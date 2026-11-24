@@ -1,16 +1,17 @@
+/*
+    Cliente HTTP dos endpoints de agendamento.
+*/
+
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import type { Observable } from "rxjs";
 
-import { ENDPOINT, Endpoints } from "../../../core/config/endpoints.config";
+import { ENDPOINT, Endpoints } from "../../../infra/config/endpoints.config";
 import type { AgendamentoCreateDTO } from "../models/agendamento-create.dto";
+import type { AgendamentoFilter } from "../models/agendamento-filter";
 import type { AgendamentoResponseDTO } from "../models/agendamento-response.dto";
-import type { AgendamentoStatus } from "../models/agendamento-status.enum";
 import type { AgendamentoUpdateDTO } from "../models/agendamento-update.dto";
 
-/**
- * Serviço HTTP para as operações de agendamento na API do backend.
- */
 @Injectable({
     providedIn: "root",
 })
@@ -53,36 +54,16 @@ export class AgendamentoService {
     /**
      * Lista os agendamentos, aplicando os filtros informados.
      *
-     * @param status - Filtra pelo status do agendamento.
-     * @param data - Filtra pela data no formato ISO.
-     * @param usuarioId - Filtra pelo identificador do usuário.
-     * @param servicoId - Filtra pelo identificador do serviço.
+     * @param filter - Filtros opcionais; campos ausentes não viram query params.
      * @returns A lista de agendamentos correspondente aos filtros.
      * @example
      * ```ts
-     * agendamentoService.findAll(AgendamentoStatus.AGENDADO, "2026-08-30");
+     * agendamentoService.findAll({ status: AgendamentoStatus.AGENDADO, data: "2026-08-30" });
      * ```
      */
-    findAll(
-        status?: AgendamentoStatus,
-        data?: string,
-        usuarioId?: number,
-        servicoId?: number,
-    ): Observable<AgendamentoResponseDTO[]> {
-        let params = new HttpParams();
-
-        if (status != null) {
-            params = params.set("status", status);
-        }
-        if (data != null) {
-            params = params.set("data", data);
-        }
-        if (usuarioId != null) {
-            params = params.set("usuarioId", usuarioId);
-        }
-        if (servicoId != null) {
-            params = params.set("servicoId", servicoId);
-        }
+    findAll(filter: AgendamentoFilter = {}): Observable<AgendamentoResponseDTO[]> {
+        const definidos = Object.entries(filter).filter(([, valor]) => valor != null);
+        const params = new HttpParams({ fromObject: Object.fromEntries(definidos) });
 
         return this.http.get<AgendamentoResponseDTO[]>(this.url, { params });
     }

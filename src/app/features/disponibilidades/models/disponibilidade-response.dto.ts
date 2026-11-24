@@ -1,11 +1,15 @@
-import type { DiaSemana } from "./dia-semana.enum";
+/*
+    Disponibilidade como a API a devolve.
+*/
+
+import type { DisponibilidadeDiaSemana } from "./disponibilidade-dia-semana.enum";
 
 /**
  * Dados de uma disponibilidade retornada pela API.
  */
 export interface DisponibilidadeResponseDTO {
     id: number;
-    diaSemana: DiaSemana;
+    diaSemana: DisponibilidadeDiaSemana;
     horaInicio: string;
     horaFim: string;
 }

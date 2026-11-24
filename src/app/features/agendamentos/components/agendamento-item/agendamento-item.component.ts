@@ -1,19 +1,17 @@
+/*
+    Cartão de um agendamento com as ações de editar, cancelar e excluir liberadas conforme a sessão.
+*/
+
 import { Component, Input, inject, signal } from "@angular/core";
 import { MdbModalModule, MdbModalService } from "mdb-angular-ui-kit/modal";
-import { Formats } from "../../../../core/config/formats.config";
-import { ModalConfig } from "../../../../core/config/modal.config";
-import { AlertService } from "../../../../core/services/alert.service";
+import { Formats } from "../../../../infra/config/formats.config";
+import { UiConfig } from "../../../../infra/config/ui.config";
+import { AlertService } from "../../../../infra/services/alert.service";
 import { AuthStore } from "../../../auth/services/auth.store";
 import { AgendamentoStatus } from "../../models/agendamento-status.enum";
 import { AgendamentoStore, type AgendamentoView } from "../../services/agendamento.store";
 import { AgendamentoFormComponent } from "../agendamento-form/agendamento-form.component";
 
-/**
- * Cartão de um único agendamento e as ações permitidas a quem está na sessão.
- *
- * Um gestor vê o cliente, exclui ou edita; um cliente cancela ou muda o próprio agendamento
- * por um menu compacto, sem acesso à exclusão.
- */
 @Component({
     selector: "app-agendamento-item",
     imports: [MdbModalModule],
@@ -23,25 +21,25 @@ import { AgendamentoFormComponent } from "../agendamento-form/agendamento-form.c
 export class AgendamentoItemComponent {
     /**
      * Loja reativa dos agendamentos, usada para remover e atualizar o item exibido.
-     * @see {@link AgendamentoStore}
+     * {@link AgendamentoStore}
      */
     private readonly store = inject(AgendamentoStore);
 
     /**
      * Superfície de diálogos, usada para confirmar o cancelamento e a exclusão.
-     * @see {@link AlertService}
+     * {@link AlertService}
      */
     private readonly alertService = inject(AlertService);
 
     /**
      * Serviço de modais do MDB, usado para abrir o formulário de edição.
-     * @see {@link MdbModalService}
+     * {@link MdbModalService}
      */
     private readonly modalService = inject(MdbModalService);
 
     /**
      * Sessão do usuário, que define o conjunto de ações do item.
-     * @see {@link AuthStore}
+     * {@link AuthStore}
      */
     readonly authStore = inject(AuthStore);
 
@@ -58,7 +56,7 @@ export class AgendamentoItemComponent {
      * @returns A data e o horário legíveis.
      */
     formatData(data: string): string {
-        return Formats.DATA_HORA.format(new Date(data));
+        return Formats.DATE_TIME.format(new Date(data));
     }
 
     /**
@@ -68,7 +66,7 @@ export class AgendamentoItemComponent {
      * @returns O valor com o símbolo da moeda.
      */
     formatPreco(valor: number): string {
-        return Formats.PRECO.format(valor);
+        return Formats.CURRENCY.format(valor);
     }
 
     /**
@@ -80,7 +78,6 @@ export class AgendamentoItemComponent {
 
     /**
      * Cancela o agendamento exibido após a confirmação do cliente.
-     *
      * Recusar o diálogo não altera nada.
      */
     async cancel(): Promise<void> {
@@ -105,14 +102,13 @@ export class AgendamentoItemComponent {
         this.isMenuAberto.set(false);
 
         this.modalService.open(AgendamentoFormComponent, {
-            ...ModalConfig,
+            ...UiConfig.MODAL,
             data: { agendamento: this.agendamento },
         });
     }
 
     /**
      * Remove o agendamento exibido através da loja compartilhada, após a confirmação do gestor.
-     *
      * Recusar o diálogo não altera nada; uma recusa do backend deixa a lista intacta e já é
      * reportada pela loja.
      */

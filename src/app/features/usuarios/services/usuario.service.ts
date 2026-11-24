@@ -1,17 +1,18 @@
+/*
+    Cliente HTTP dos endpoints de usuário e de autenticação.
+*/
+
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import type { Observable } from "rxjs";
 
-import { ENDPOINT, Endpoints } from "../../../core/config/endpoints.config";
+import { ENDPOINT, Endpoints } from "../../../infra/config/endpoints.config";
+import type { AuthResponseDTO } from "../models/auth-response.dto";
 import type { UsuarioCreateDTO } from "../models/usuario-create.dto";
 import type { UsuarioLoginRequestDTO } from "../models/usuario-login-request.dto";
-import type { UsuarioLoginResponseDTO } from "../models/usuario-login-response.dto";
 import type { UsuarioResponseDTO } from "../models/usuario-response.dto";
 import type { UsuarioUpdateDTO } from "../models/usuario-update.dto";
 
-/**
- * Serviço HTTP para as operações de usuário na API do backend.
- */
 @Injectable({
     providedIn: "root",
 })
@@ -22,34 +23,35 @@ export class UsuarioService {
     /** URL base do recurso de usuários. */
     private readonly url = Endpoints.USUARIOS_URL;
 
+    /** URL base da autenticação. */
+    private readonly authUrl = Endpoints.AUTHENTICATION_URL;
+
     /**
-     * Cria um novo usuário.
+     * Cadastra um novo usuário como `CLIENTE` e emite o token dele.
      *
      * @param request - Dados do usuário a ser criado.
-     * @returns O usuário criado.
+     * @returns O token emitido e o usuário criado.
      * @example
      * ```ts
-     * usuarioService.create({ nome: "Ana", email: "ana@email.com", senha: "senha123" });
+     * usuarioService.register({ nome: "Ana", email: "ana@email.com", senha: "senha123" });
      * ```
      */
-    create(request: UsuarioCreateDTO): Observable<UsuarioResponseDTO> {
-        return this.http.post<UsuarioResponseDTO>(this.url, request);
+    register(request: UsuarioCreateDTO): Observable<AuthResponseDTO> {
+        return this.http.post<AuthResponseDTO>(ENDPOINT(this.authUrl, "register"), request);
     }
 
     /**
-     * Autentica um usuário pelas credenciais informadas.
-     *
-     * A resposta é sempre bem-sucedida: `sucesso` diz se as credenciais conferem.
+     * Autentica um usuário pelas credenciais informadas. Credenciais inválidas respondem `401`.
      *
      * @param request - Credenciais informadas.
-     * @returns O resultado da autenticação.
+     * @returns O token emitido e o usuário autenticado.
      * @example
      * ```ts
      * usuarioService.login({ email: "ana@email.com", senha: "senha123" });
      * ```
      */
-    login(request: UsuarioLoginRequestDTO): Observable<UsuarioLoginResponseDTO> {
-        return this.http.post<UsuarioLoginResponseDTO>(ENDPOINT(this.url, "login"), request);
+    login(request: UsuarioLoginRequestDTO): Observable<AuthResponseDTO> {
+        return this.http.post<AuthResponseDTO>(ENDPOINT(this.authUrl, "login"), request);
     }
 
     /**

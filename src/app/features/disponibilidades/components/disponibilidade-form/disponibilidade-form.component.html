@@ -1,7 +1,7 @@
 <div class="modal-header app-disponibilidade-form__cabecalho">
-    <h5 class="modal-title app-disponibilidade-form__titulo">
+    <h2 class="modal-title app-disponibilidade-form__titulo">
         {{ isEditing ? "Editar Disponibilidade" : "Nova Disponibilidade" }}
-    </h5>
+    </h2>
     <button (click)="close()" aria-label="Fechar" class="app-disponibilidade-form__fechar" type="button">
         <i aria-hidden="true" class="ti ti-x"></i>
     </button>
@@ -48,7 +48,7 @@
         </div>
 
         @if (submitted() && form.invalid) {
-            <p class="app-disponibilidade-form__erro">
+            <p class="app-disponibilidade-form__erro" role="alert">
                 <i aria-hidden="true" class="ti ti-alert-triangle"></i>
                 Preencha todos os campos para {{ isEditing ? "salvar" : "cadastrar" }} a disponibilidade.
             </p>

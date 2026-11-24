@@ -1,16 +1,17 @@
+/*
+    Cliente HTTP dos endpoints de disponibilidade.
+*/
+
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import type { Observable } from "rxjs";
 
-import { ENDPOINT, Endpoints } from "../../../core/config/endpoints.config";
-import type { DiaSemana } from "../models/dia-semana.enum";
+import { ENDPOINT, Endpoints } from "../../../infra/config/endpoints.config";
 import type { DisponibilidadeCreateDTO } from "../models/disponibilidade-create.dto";
+import type { DisponibilidadeDiaSemana } from "../models/disponibilidade-dia-semana.enum";
 import type { DisponibilidadeResponseDTO } from "../models/disponibilidade-response.dto";
 import type { DisponibilidadeUpdateDTO } from "../models/disponibilidade-update.dto";
 
-/**
- * Serviço HTTP para as operações de disponibilidade na API do backend.
- */
 @Injectable({
     providedIn: "root",
 })
@@ -28,7 +29,7 @@ export class DisponibilidadeService {
      * @returns A disponibilidade criada.
      * @example
      * ```ts
-     * disponibilidadeService.create({ diaSemana: DiaSemana.SEGUNDA, horaInicio: "09:00", horaFim: "18:00" });
+     * disponibilidadeService.create({ diaSemana: DisponibilidadeDiaSemana.SEGUNDA, horaInicio: "09:00", horaFim: "18:00" });
      * ```
      */
     create(request: DisponibilidadeCreateDTO): Observable<DisponibilidadeResponseDTO> {
@@ -84,10 +85,10 @@ export class DisponibilidadeService {
      * @returns As disponibilidades do dia informado.
      * @example
      * ```ts
-     * disponibilidadeService.findByDiaSemana(DiaSemana.SEGUNDA);
+     * disponibilidadeService.findByDiaSemana(DisponibilidadeDiaSemana.SEGUNDA);
      * ```
      */
-    findByDiaSemana(diaSemana: DiaSemana): Observable<DisponibilidadeResponseDTO[]> {
+    findByDiaSemana(diaSemana: DisponibilidadeDiaSemana): Observable<DisponibilidadeResponseDTO[]> {
         return this.http.get<DisponibilidadeResponseDTO[]>(ENDPOINT(this.url, "dia", diaSemana));
     }
 
