@@ -2,7 +2,11 @@
 
 .app-agendamento-form__titulo {
     font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
     font-weight: var(--font-weight-semibold);
+    color: var(--text-tertiary);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
 }
 
 .app-agendamento-form__fechar {

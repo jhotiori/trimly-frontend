@@ -1,3 +1,7 @@
+/*
+    Credenciais enviadas no login.
+*/
+
 /**
  * Credenciais enviadas no login por usuário.
  */

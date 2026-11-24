@@ -1,26 +1,30 @@
+/*
+    Estado reativo das disponibilidades, recarregado a cada sessão.
+*/
+
 import type { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject, signal } from "@angular/core";
+import { effect, Injectable, inject, signal, untracked } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
-import { ErrorMessages } from "../../../core/config/messages.config";
-import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
+import { ErrorMessages } from "../../../infra/config/messages.config";
+import { AlertService, extractErrorMessage } from "../../../infra/services/alert.service";
+import { AuthStore } from "../../auth/services/auth.store";
 import type { DisponibilidadeCreateDTO } from "../models/disponibilidade-create.dto";
 import type { DisponibilidadeResponseDTO } from "../models/disponibilidade-response.dto";
 import type { DisponibilidadeUpdateDTO } from "../models/disponibilidade-update.dto";
 import { DisponibilidadeService } from "./disponibilidade.service";
 
-/**
- * Loja reativa das disponibilidades, servida pela API.
- *
- * Mantém a lista em um signal e delega toda leitura e escrita ao `DisponibilidadeService`. O
- * signal só muda depois que a resposta HTTP chega, então uma recusa do backend deixa a lista
- * intacta e mostra a mensagem original em um diálogo.
- */
 @Injectable({
     providedIn: "root",
 })
 export class DisponibilidadeStore {
     /** Serviço HTTP de disponibilidades. */
     private readonly service = inject(DisponibilidadeService);
+
+    /**
+     * Sessão do usuário, cuja abertura recarrega a lista e cujo encerramento a esvazia.
+     * {@link AuthStore}
+     */
+    private readonly authStore = inject(AuthStore);
 
     /** Superfície de diálogos usada para reportar as recusas do backend. */
     private readonly alertService = inject(AlertService);
@@ -32,6 +36,20 @@ export class DisponibilidadeStore {
     readonly disponibilidades = this.disponibilidadesState.asReadonly();
 
     constructor() {
+        // Cada sessão recarrega a lista, e o logout a esvazia para o próximo usuário.
+        effect(() => {
+            if (this.authStore.token()) {
+                untracked(() => this.load());
+            } else {
+                this.disponibilidadesState.set([]);
+            }
+        });
+    }
+
+    /**
+     * Recarrega a lista a partir da API. Uma falha, como o `403` de um `CLIENTE`, mantém a lista atual.
+     */
+    load(): void {
         this.service.findAll().subscribe({
             next: (disponibilidades) => this.disponibilidadesState.set(disponibilidades),
             error: () => {},
@@ -45,7 +63,7 @@ export class DisponibilidadeStore {
      * @returns A disponibilidade criada, ou `null` quando o backend recusa a criação.
      * @example
      * ```ts
-     * disponibilidadeStore.add({ diaSemana: DiaSemana.SEGUNDA, horaInicio: "09:00", horaFim: "18:00" }).subscribe();
+     * disponibilidadeStore.add({ diaSemana: DisponibilidadeDiaSemana.SEGUNDA, horaInicio: "09:00", horaFim: "18:00" }).subscribe();
      * ```
      */
     add(request: DisponibilidadeCreateDTO): Observable<DisponibilidadeResponseDTO | null> {

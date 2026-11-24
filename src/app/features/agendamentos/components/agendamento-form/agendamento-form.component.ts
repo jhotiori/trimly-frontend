@@ -1,8 +1,15 @@
-import { Component, computed, inject, type OnInit, signal } from "@angular/core";
+/*
+    Formulário modal que cria ou edita um agendamento, limitando a data à antecedência máxima.
+*/
+
+import { Component, computed, effect, inject, type OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 import { MdbModalRef } from "mdb-angular-ui-kit/modal";
-import { EnumLabelPipe } from "../../../../core/pipes/enum-label.pipe";
+import { BusinessRules } from "../../../../infra/config/business-rules.config";
+import { Formats } from "../../../../infra/config/formats.config";
+import { EnumLabelPipe } from "../../../../infra/pipes/enum-label.pipe";
+import { toHHmm } from "../../../../infra/utils/time.util";
 import { AuthStore } from "../../../auth/services/auth.store";
 import { ServicoStore } from "../../../servicos/services/servico.store";
 import { UsuarioCargo } from "../../../usuarios/models/usuario-cargo.enum";
@@ -11,13 +18,6 @@ import { AgendamentoStatus } from "../../models/agendamento-status.enum";
 import type { AgendamentoUpdateDTO } from "../../models/agendamento-update.dto";
 import { AgendamentoStore, type AgendamentoView } from "../../services/agendamento.store";
 
-/**
- * Formulário de agendamento exibido dentro de um modal do MDB.
- *
- * Serve à criação e à edição: sem um agendamento recebido cria um novo registro, com um
- * agendamento recebido preenche os campos e atualiza aquele id. O modal só fecha quando o
- * backend aceita, então uma recusa mantém o formulário como está.
- */
 @Component({
     selector: "app-agendamento-form",
     imports: [EnumLabelPipe, MdbFormsModule, ReactiveFormsModule],
@@ -27,37 +27,38 @@ import { AgendamentoStore, type AgendamentoView } from "../../services/agendamen
 export class AgendamentoFormComponent implements OnInit {
     /**
      * Construtor de formulários reativos.
-     * @see {@link FormBuilder}
+     * {@link FormBuilder}
      */
     private readonly builder = inject(FormBuilder);
 
     /**
      * Loja reativa dos agendamentos, usada para criar e atualizar o registro.
-     * @see {@link AgendamentoStore}
+     * {@link AgendamentoStore}
      */
     private readonly store = inject(AgendamentoStore);
 
     /**
      * Referência do modal que hospeda o formulário.
-     * @see {@link MdbModalRef}
+     * {@link MdbModalRef}
      */
     private readonly modalRef = inject(MdbModalRef<AgendamentoFormComponent>);
 
     /**
      * Loja reativa dos serviços, usada para popular a seleção de serviço.
-     * @see {@link ServicoStore}
+     * {@link ServicoStore}
      */
     private readonly servicoStore = inject(ServicoStore);
 
     /**
      * Diretório de usuários, usado para popular a seleção de cliente do gestor.
-     * @see {@link UsuarioStore}
+     * {@link UsuarioStore}
      */
     private readonly usuarioStore = inject(UsuarioStore);
 
     /**
-     * Sessão do usuário, que define o cliente do agendamento e os campos visíveis.
-     * @see {@link AuthStore}
+     * Sessão do usuário, que define o cliente do agendamento e os campos visíveis e fecha o modal ao
+     * ser encerrada.
+     * {@link AuthStore}
      */
     readonly authStore = inject(AuthStore);
 
@@ -81,8 +82,8 @@ export class AgendamentoFormComponent implements OnInit {
     /** Menor data aceita pelo campo de data: hoje, no formato `yyyy-MM-dd`. */
     readonly dataMinima = this.computeDataIso(0);
 
-    /** Maior data aceita pelo campo de data: hoje mais 14 dias, no formato `yyyy-MM-dd`. */
-    readonly dataMaxima = this.computeDataIso(14);
+    /** Maior data aceita pelo campo de data: hoje mais a antecedência máxima, no formato `yyyy-MM-dd`. */
+    readonly dataMaxima = this.computeDataIso(BusinessRules.ANTECEDENCIA_MAXIMA_DIAS);
 
     /** Campos do agendamento. */
     readonly form = this.builder.nonNullable.group({
@@ -92,6 +93,15 @@ export class AgendamentoFormComponent implements OnInit {
         servicoId: [null as number | null, Validators.required],
         status: [null as AgendamentoStatus | null],
     });
+
+    constructor() {
+        // A sessão encerrada (logout ou `401`) fecha o modal, liberando a tela de login.
+        effect(() => {
+            if (!this.authStore.isAutenticado()) {
+                this.modalRef.close();
+            }
+        });
+    }
 
     /**
      * Indica se o formulário está editando um agendamento existente.
@@ -113,7 +123,7 @@ export class AgendamentoFormComponent implements OnInit {
 
             this.form.patchValue({
                 data,
-                horario: horario.slice(0, 5),
+                horario: toHHmm(horario),
                 servicoId: agendamento.servicoId,
                 status: agendamento.status,
             });
@@ -129,7 +139,6 @@ export class AgendamentoFormComponent implements OnInit {
 
     /**
      * Cria ou atualiza o agendamento quando o formulário está válido.
-     *
      * O modal só fecha quando o backend aceita a operação; qualquer recusa já foi reportada
      * pela loja e deixa o formulário intacto. Um envio inválido é bloqueado e apenas revela
      * o estado de validação dos campos.
@@ -209,9 +218,6 @@ export class AgendamentoFormComponent implements OnInit {
         const data = new Date();
         data.setDate(data.getDate() + dias);
 
-        const mes = String(data.getMonth() + 1).padStart(2, "0");
-        const dia = String(data.getDate()).padStart(2, "0");
-
-        return `${data.getFullYear()}-${mes}-${dia}`;
+        return Formats.DATE_ISO.format(data);
     }
 }

@@ -1,3 +1,7 @@
+/*
+    Payload de atualização parcial (PATCH) de serviço.
+*/
+
 import type { ServicoStatus } from "./servico-status.enum";
 
 /**

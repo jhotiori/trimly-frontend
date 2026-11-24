@@ -1,3 +1,7 @@
+/*
+    Filtros opcionais da listagem de agendamentos, enviados como query params.
+*/
+
 import type { AgendamentoStatus } from "./agendamento-status.enum";
 
 /**

@@ -21,10 +21,14 @@
     gap: var(--spacing-2xl);
 }
 
-/* Título: um degrau abaixo do `h2` global e com folga extra antes do formulário */
+/* Título: `h1` da página no visual do `h2` global, um degrau menor e com folga extra antes do formulário */
 
 .app-auth__titulo {
+    font-family: var(--font-family-display);
     font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
     margin-bottom: var(--spacing-md);
 }
 

@@ -1,3 +1,7 @@
+/*
+    Usuário como a API o devolve.
+*/
+
 import type { UsuarioCargo } from "./usuario-cargo.enum";
 
 /**

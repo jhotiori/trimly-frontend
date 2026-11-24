@@ -1,3 +1,7 @@
+/*
+    Cargos de usuário, com os mesmos valores do backend.
+*/
+
 /**
  * Cargos possíveis de um usuário.
  */

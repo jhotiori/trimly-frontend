@@ -1,17 +1,16 @@
+/*
+    Formulário de cadastro: cria a conta, já autenticada, e entra no painel.
+*/
+
 import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 
-import { RoutePaths } from "../../../../core/config/route-paths.config";
+import { BusinessRules } from "../../../../infra/config/business-rules.config";
+import { RoutePaths } from "../../../../infra/config/route-paths.config";
 import { AuthStore } from "../../services/auth.store";
 
-/**
- * Formulário de registro: cria o usuário na API, que já o autentica, e entra no painel.
- *
- * Uma recusa do backend não acrescenta erro local: a mensagem já foi mostrada pelo
- * diretório de usuários e a ausência de navegação basta como sinal.
- */
 @Component({
     selector: "app-registrar-form",
     imports: [MdbFormsModule, ReactiveFormsModule],
@@ -32,12 +31,11 @@ export class RegistrarFormComponent {
     readonly form = this.builder.nonNullable.group({
         nome: ["", [Validators.required]],
         email: ["", [Validators.required, Validators.email]],
-        senha: ["", [Validators.required, Validators.minLength(6)]],
+        senha: ["", [Validators.required, Validators.minLength(BusinessRules.SENHA_MIN_LENGTH)]],
     });
 
     /**
      * Cria o usuário, que entra autenticado, e navega para o painel.
-     *
      * Um envio inválido é bloqueado e apenas revela o estado de validação dos campos.
      */
     submit(): void {

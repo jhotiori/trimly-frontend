@@ -1,9 +1,13 @@
+/*
+    Estado reativo dos agendamentos e a visão que resolve o nome do serviço e do cliente de cada um.
+*/
+
 import type { HttpErrorResponse } from "@angular/common/http";
-import { computed, Injectable, inject, signal } from "@angular/core";
+import { computed, effect, Injectable, inject, signal, untracked } from "@angular/core";
 import { catchError, map, type Observable, of, tap } from "rxjs";
-import { ErrorMessages } from "../../../core/config/messages.config";
-import { Placeholders } from "../../../core/config/placeholders.config";
-import { AlertService, extractErrorMessage } from "../../../core/services/alert.service";
+import { ErrorMessages } from "../../../infra/config/messages.config";
+import { AlertService, extractErrorMessage } from "../../../infra/services/alert.service";
+import { AuthStore } from "../../auth/services/auth.store";
 import { ServicoStore } from "../../servicos/services/servico.store";
 import { UsuarioStore } from "../../usuarios/services/usuario.store";
 import type { AgendamentoCreateDTO } from "../models/agendamento-create.dto";
@@ -11,9 +15,11 @@ import type { AgendamentoResponseDTO } from "../models/agendamento-response.dto"
 import type { AgendamentoUpdateDTO } from "../models/agendamento-update.dto";
 import { AgendamentoService } from "./agendamento.service";
 
+/** Nome exibido quando o serviço ou o usuário do agendamento não existe mais. */
+const REMOVIDO = "[removido]";
+
 /**
  * Agendamento acrescido dos dados de serviço e cliente necessários para exibi-lo em tela.
- *
  * Compõe o DTO de resposta em vez de substituí-lo, então qualquer mudança no contrato da
  * API aparece como erro de compilação aqui.
  */
@@ -23,14 +29,6 @@ export type AgendamentoView = AgendamentoResponseDTO & {
     usuarioNome: string;
 };
 
-/**
- * Loja reativa dos agendamentos, servida pela API.
- *
- * Mantém a lista em um signal, resolve serviço e cliente de cada agendamento para exibição
- * e delega toda leitura e escrita ao `AgendamentoService`. O signal só muda depois que a
- * resposta HTTP chega, então uma recusa do backend deixa a lista intacta e mostra a
- * mensagem original em um diálogo. A duração vem sempre da resposta do backend.
- */
 @Injectable({
     providedIn: "root",
 })
@@ -39,14 +37,20 @@ export class AgendamentoStore {
     private readonly service = inject(AgendamentoService);
 
     /**
+     * Sessão do usuário, cuja abertura recarrega a lista e cujo encerramento a esvazia.
+     * {@link AuthStore}
+     */
+    private readonly authStore = inject(AuthStore);
+
+    /**
      * Loja de serviços usada para resolver nome e preço de cada agendamento.
-     * @see {@link ServicoStore}
+     * {@link ServicoStore}
      */
     private readonly servicoStore = inject(ServicoStore);
 
     /**
      * Diretório de usuários usado para resolver o nome do cliente de cada agendamento.
-     * @see {@link UsuarioStore}
+     * {@link UsuarioStore}
      */
     private readonly usuarioStore = inject(UsuarioStore);
 
@@ -67,14 +71,28 @@ export class AgendamentoStore {
 
             return {
                 ...agendamento,
-                servicoNome: servico?.nome ?? Placeholders.REMOVIDO,
+                servicoNome: servico?.nome ?? REMOVIDO,
                 servicoPreco: servico?.valor ?? 0,
-                usuarioNome: usuario?.nome ?? Placeholders.REMOVIDO,
+                usuarioNome: usuario?.nome ?? REMOVIDO,
             };
         });
     });
 
     constructor() {
+        // Cada sessão recarrega a lista, e o logout a esvazia para o próximo usuário.
+        effect(() => {
+            if (this.authStore.token()) {
+                untracked(() => this.load());
+            } else {
+                this.agendamentosState.set([]);
+            }
+        });
+    }
+
+    /**
+     * Recarrega a lista a partir da API. Uma falha, como o `403` de um `CLIENTE`, mantém a lista atual.
+     */
+    load(): void {
         this.service.findAll().subscribe({
             next: (agendamentos) => this.agendamentosState.set(agendamentos),
             error: () => {},
@@ -83,7 +101,6 @@ export class AgendamentoStore {
 
     /**
      * Cria um novo agendamento na API e o acrescenta à lista.
-     *
      * O status e a duração vêm da resposta do backend, que é a autoridade sobre ambos.
      *
      * @param request - Dados do agendamento a ser criado.

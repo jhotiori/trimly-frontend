@@ -1,21 +1,19 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+/*
+    Formulário modal que cria ou edita uma disponibilidade: dia da semana e janela de atendimento.
+*/
+
+import { Component, effect, inject, type OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 import { MdbModalRef } from "mdb-angular-ui-kit/modal";
 
-import { EnumLabelPipe } from "../../../../core/pipes/enum-label.pipe";
-import { DiaSemana } from "../../models/dia-semana.enum";
+import { EnumLabelPipe } from "../../../../infra/pipes/enum-label.pipe";
+import { toHHmm } from "../../../../infra/utils/time.util";
+import { AuthStore } from "../../../auth/services/auth.store";
+import { DisponibilidadeDiaSemana } from "../../models/disponibilidade-dia-semana.enum";
 import type { DisponibilidadeResponseDTO } from "../../models/disponibilidade-response.dto";
 import { DisponibilidadeStore } from "../../services/disponibilidade.store";
 
-/**
- * Formulário de disponibilidade exibido dentro de um modal do MDB.
- *
- * Serve à criação e à edição: sem uma disponibilidade recebida cria a janela de atendimento
- * de um dia da semana, com uma disponibilidade recebida preenche os campos e atualiza aquele
- * id. O modal só fecha quando o backend aceita, então uma recusa mantém o formulário como
- * está.
- */
 @Component({
     selector: "app-disponibilidade-form",
     imports: [MdbFormsModule, ReactiveFormsModule, EnumLabelPipe],
@@ -25,37 +23,52 @@ import { DisponibilidadeStore } from "../../services/disponibilidade.store";
 export class DisponibilidadeFormComponent implements OnInit {
     /**
      * Construtor de formulários reativos.
-     * @see {@link FormBuilder}
+     * {@link FormBuilder}
      */
     private readonly builder = inject(FormBuilder);
 
     /**
      * Loja reativa das disponibilidades, usada para criar e atualizar o registro.
-     * @see {@link DisponibilidadeStore}
+     * {@link DisponibilidadeStore}
      */
     private readonly store = inject(DisponibilidadeStore);
 
     /**
      * Referência do modal que hospeda o formulário.
-     * @see {@link MdbModalRef}
+     * {@link MdbModalRef}
      */
     private readonly modalRef = inject(MdbModalRef<DisponibilidadeFormComponent>);
+
+    /**
+     * Sessão do usuário, cujo encerramento fecha o modal.
+     * {@link AuthStore}
+     */
+    private readonly authStore = inject(AuthStore);
 
     /** Disponibilidade em edição, atribuída pelo `data` do modal. Ausente na criação. */
     disponibilidade?: DisponibilidadeResponseDTO;
 
     /** Dias da semana que podem receber uma disponibilidade. */
-    readonly diasDisponiveis = Object.values(DiaSemana);
+    readonly diasDisponiveis = Object.values(DisponibilidadeDiaSemana);
 
     /** Indica que houve uma tentativa de envio, liberando as mensagens de erro. */
     readonly submitted = signal(false);
 
     /** Campos da disponibilidade. */
     readonly form = this.builder.nonNullable.group({
-        diaSemana: [null as DiaSemana | null, [Validators.required]],
+        diaSemana: [null as DisponibilidadeDiaSemana | null, [Validators.required]],
         horaInicio: ["", [Validators.required]],
         horaFim: ["", [Validators.required]],
     });
+
+    constructor() {
+        // A sessão encerrada (logout ou `401`) fecha o modal, liberando a tela de login.
+        effect(() => {
+            if (!this.authStore.isAutenticado()) {
+                this.modalRef.close();
+            }
+        });
+    }
 
     /**
      * Indica se o formulário está editando uma disponibilidade existente.
@@ -68,7 +81,6 @@ export class DisponibilidadeFormComponent implements OnInit {
 
     /**
      * Preenche o formulário quando uma disponibilidade é recebida para edição.
-     *
      * Os horários chegam da API com os segundos, recortados aqui para o formato `HH:mm` que
      * os campos de hora aceitam.
      */
@@ -81,14 +93,13 @@ export class DisponibilidadeFormComponent implements OnInit {
 
         this.form.patchValue({
             diaSemana: disponibilidade.diaSemana,
-            horaInicio: disponibilidade.horaInicio.slice(0, 5),
-            horaFim: disponibilidade.horaFim.slice(0, 5),
+            horaInicio: toHHmm(disponibilidade.horaInicio),
+            horaFim: toHHmm(disponibilidade.horaFim),
         });
     }
 
     /**
      * Cria ou atualiza a disponibilidade quando o formulário está válido.
-     *
      * O modal só fecha quando o backend aceita a operação; qualquer recusa já foi reportada
      * pela loja e deixa o formulário intacto. Um envio inválido é bloqueado e apenas revela
      * o estado de validação dos campos.

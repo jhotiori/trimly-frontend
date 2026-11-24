@@ -1,3 +1,7 @@
+/*
+    Payload de criação de agendamento enviado à API.
+*/
+
 /**
  * Dados necessários para criar um agendamento.
  */

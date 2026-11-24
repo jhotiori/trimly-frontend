@@ -1,15 +1,16 @@
+/*
+    Formulário de login: autentica na API e entra no painel, ou mostra a falha no próprio formulário.
+*/
+
 import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 
-import { RoutePaths } from "../../../../core/config/route-paths.config";
-import { AlertService } from "../../../../core/services/alert.service";
+import { RoutePaths } from "../../../../infra/config/route-paths.config";
+import { AlertService } from "../../../../infra/services/alert.service";
 import { AuthStore } from "../../services/auth.store";
 
-/**
- * Formulário de acesso: confere as credenciais contra a API e entra no painel.
- */
 @Component({
     selector: "app-login-form",
     imports: [MdbFormsModule, ReactiveFormsModule],
@@ -37,7 +38,6 @@ export class LoginFormComponent {
 
     /**
      * Autentica o visitante e navega para o painel quando as credenciais conferem.
-     *
      * Um envio inválido é bloqueado e apenas revela o estado de validação dos campos.
      */
     submit(): void {

@@ -1,16 +1,17 @@
+/*
+    Cliente HTTP dos endpoints de serviço.
+*/
+
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import type { Observable } from "rxjs";
 
-import { ENDPOINT, Endpoints } from "../../../core/config/endpoints.config";
+import { ENDPOINT, Endpoints } from "../../../infra/config/endpoints.config";
 import type { ServicoCreateDTO } from "../models/servico-create.dto";
 import type { ServicoResponseDTO } from "../models/servico-response.dto";
 import type { ServicoStatus } from "../models/servico-status.enum";
 import type { ServicoUpdateDTO } from "../models/servico-update.dto";
 
-/**
- * Serviço HTTP para as operações de serviço na API do backend.
- */
 @Injectable({
     providedIn: "root",
 })

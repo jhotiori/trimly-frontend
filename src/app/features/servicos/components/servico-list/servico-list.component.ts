@@ -1,11 +1,12 @@
+/*
+    Grade de cartões de serviço, com estado vazio quando a lista não tem itens.
+*/
+
 import { Component, Input } from "@angular/core";
 
 import type { ServicoResponseDTO } from "../../models/servico-response.dto";
 import { ServicoItemComponent } from "../servico-item/servico-item.component";
 
-/**
- * Exibe os serviços em uma grade de cartões, ou um estado vazio quando não há nenhum.
- */
 @Component({
     selector: "app-servico-list",
     imports: [ServicoItemComponent],

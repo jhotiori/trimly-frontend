@@ -1,3 +1,7 @@
+/*
+    Payload de cadastro de usuário enviado à API.
+*/
+
 /**
  * Dados necessários para criar um usuário.
  */

@@ -1,4 +1,8 @@
-import { Component, computed, inject } from "@angular/core";
+/*
+    Visão geral do painel: resumo da semana corrente a partir das lojas de agendamentos e serviços.
+*/
+
+import { Component, computed, inject, type OnInit } from "@angular/core";
 import { AgendamentoListComponent } from "../agendamentos/components/agendamento-list/agendamento-list.component";
 import { AgendamentoStatus } from "../agendamentos/models/agendamento-status.enum";
 import { AgendamentoStore } from "../agendamentos/services/agendamento.store";
@@ -9,32 +13,28 @@ import { DisponibilidadeStore } from "../disponibilidades/services/disponibilida
 /** Quantidade de dias da semana corrente, de segunda a domingo. */
 const DIAS_NA_SEMANA = 7;
 
-/**
- * Tela de boas-vindas do painel: a saudação, os agendamentos da semana corrente e as
- * disponibilidades da barbearia.
- */
 @Component({
     selector: "app-dashboard",
     imports: [AgendamentoListComponent, DisponibilidadeListComponent],
     templateUrl: "./dashboard.component.html",
     styleUrl: "./dashboard.component.scss",
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
     /**
      * Loja reativa dos agendamentos.
-     * @see {@link AgendamentoStore}
+     * {@link AgendamentoStore}
      */
     private readonly agendamentoStore = inject(AgendamentoStore);
 
     /**
      * Loja reativa das disponibilidades.
-     * @see {@link DisponibilidadeStore}
+     * {@link DisponibilidadeStore}
      */
     private readonly disponibilidadeStore = inject(DisponibilidadeStore);
 
     /**
      * Sessão do usuário, origem do nome exibido na saudação.
-     * @see {@link AuthStore}
+     * {@link AuthStore}
      */
     readonly authStore = inject(AuthStore);
 
@@ -43,7 +43,6 @@ export class DashboardComponent {
 
     /**
      * Agendamentos visíveis para quem está na sessão, na semana corrente.
-     *
      * Mostra apenas os `AGENDADO` entre a segunda e o domingo atuais, calculados no
      * navegador; um cliente vê só os seus, um gestor vê os de todos.
      */
@@ -70,4 +69,12 @@ export class DashboardComponent {
 
         return agendados.filter((agendamento) => agendamento.usuarioId === usuarioId);
     });
+
+    /**
+     * Recarrega os agendamentos e as disponibilidades a cada entrada no painel.
+     */
+    ngOnInit(): void {
+        this.agendamentoStore.load();
+        this.disponibilidadeStore.load();
+    }
 }

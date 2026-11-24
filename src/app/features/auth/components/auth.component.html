@@ -1,5 +1,5 @@
-<div class="app-auth__cartao">
-    <h2 class="app-auth__titulo">{{ mode() === "login" ? "Login" : "Registrar" }}</h2>
+<main class="app-auth__cartao">
+    <h1 class="app-auth__titulo">{{ mode() === "login" ? "Login" : "Registrar" }}</h1>
 
     <div class="app-auth__formulario">
         @if (mode() === "login") {
@@ -20,4 +20,4 @@
             <button (click)="toggle()" type="button">Faça o login.</button>
         </p>
     }
-</div>
+</main>

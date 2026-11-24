@@ -1,20 +1,19 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+/*
+    Formulário modal que cria ou edita um serviço, com status liberado só na edição.
+*/
+
+import { Component, effect, inject, type OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MdbFormsModule } from "mdb-angular-ui-kit/forms";
 import { MdbModalRef } from "mdb-angular-ui-kit/modal";
 
-import { EnumLabelPipe } from "../../../../core/pipes/enum-label.pipe";
+import { BusinessRules } from "../../../../infra/config/business-rules.config";
+import { EnumLabelPipe } from "../../../../infra/pipes/enum-label.pipe";
+import { AuthStore } from "../../../auth/services/auth.store";
 import type { ServicoResponseDTO } from "../../models/servico-response.dto";
 import { ServicoStatus } from "../../models/servico-status.enum";
 import { ServicoStore } from "../../services/servico.store";
 
-/**
- * Formulário de serviço exibido dentro de um modal do MDB.
- *
- * Serve à criação e à edição: sem um serviço recebido cria um novo registro, com um serviço
- * recebido preenche os campos, libera o status e atualiza aquele id. O modal só fecha
- * quando o backend aceita, então uma recusa mantém o formulário como está.
- */
 @Component({
     selector: "app-servico-form",
     imports: [EnumLabelPipe, MdbFormsModule, ReactiveFormsModule],
@@ -24,21 +23,27 @@ import { ServicoStore } from "../../services/servico.store";
 export class ServicoFormComponent implements OnInit {
     /**
      * Construtor de formulários reativos.
-     * @see {@link FormBuilder}
+     * {@link FormBuilder}
      */
     private readonly builder = inject(FormBuilder);
 
     /**
      * Loja reativa dos serviços, usada para criar e atualizar o registro.
-     * @see {@link ServicoStore}
+     * {@link ServicoStore}
      */
     private readonly store = inject(ServicoStore);
 
     /**
      * Referência do modal que hospeda o formulário.
-     * @see {@link MdbModalRef}
+     * {@link MdbModalRef}
      */
     private readonly modalRef = inject(MdbModalRef<ServicoFormComponent>);
+
+    /**
+     * Sessão do usuário, cujo encerramento fecha o modal.
+     * {@link AuthStore}
+     */
+    private readonly authStore = inject(AuthStore);
 
     /** Serviço em edição, atribuído pelo `data` do modal. Ausente na criação. */
     servico?: ServicoResponseDTO;
@@ -51,11 +56,20 @@ export class ServicoFormComponent implements OnInit {
 
     /** Campos do serviço. */
     readonly form = this.builder.nonNullable.group({
-        nome: ["", [Validators.required, Validators.minLength(3)]],
+        nome: ["", [Validators.required, Validators.minLength(BusinessRules.SERVICO_NOME_MIN_LENGTH)]],
         valor: [null as number | null, [Validators.required, Validators.min(1)]],
         duracao: [null as number | null, [Validators.required, Validators.min(1)]],
         status: [null as ServicoStatus | null],
     });
+
+    constructor() {
+        // A sessão encerrada (logout ou `401`) fecha o modal, liberando a tela de login.
+        effect(() => {
+            if (!this.authStore.isAutenticado()) {
+                this.modalRef.close();
+            }
+        });
+    }
 
     /**
      * Indica se o formulário está editando um serviço existente.
@@ -86,7 +100,6 @@ export class ServicoFormComponent implements OnInit {
 
     /**
      * Cria ou atualiza o serviço quando o formulário está válido.
-     *
      * O modal só fecha quando o backend aceita a operação; qualquer recusa já foi reportada
      * pela loja e deixa o formulário intacto. Um envio inválido é bloqueado e apenas revela
      * o estado de validação dos campos.
