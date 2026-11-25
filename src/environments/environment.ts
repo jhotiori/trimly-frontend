@@ -7,5 +7,5 @@
  */
 export const environment = {
     /** URL base da API do backend, sem barra final. */
-    apiUrl: "http://${window.location.hostname}:8080",
+    apiUrl: `http://${window.location.hostname}:8080`,
 };
