@@ -15,7 +15,7 @@
             "prefix": "app",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:application",
+                    "builder": "@angular/build:application",
                     "options": {
                         "outputPath": "dist/trimly-frontend",
                         "index": "src/index.html",
@@ -50,6 +50,7 @@
                                     "maximumError": "8kB"
                                 }
                             ],
+                            "extractLicenses": false,
                             "outputHashing": "all"
                         },
                         "development": {
@@ -67,7 +68,7 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "builder": "@angular/build:dev-server",
                     "configurations": {
                         "production": {
                             "buildTarget": "trimly-frontend:build:production"

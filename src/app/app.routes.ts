@@ -1,14 +1,10 @@
 /*
     Tabela de rotas: login e cadastro públicos e o painel protegido pelo `authGuard`, com uma rota por seção.
+    Todos os componentes são carregados sob demanda.
 */
 
 import type { Routes } from "@angular/router";
-import { AgendamentoScreenComponent } from "./features/agendamentos/components/agendamento-screen/agendamento-screen.component";
-import { AuthComponent } from "./features/auth/components/auth.component";
-import { DashboardComponent } from "./features/dashboard/dashboard.component";
-import { ServicoScreenComponent } from "./features/servicos/components/servico-screen/servico-screen.component";
 import { authGuard } from "./infra/guards/auth.guard";
-import { DashboardLayoutComponent } from "./infra/layout/dashboard-layout/dashboard-layout.component";
 
 export const routes: Routes = [
     {
@@ -18,11 +14,14 @@ export const routes: Routes = [
     },
     {
         path: "login",
-        component: AuthComponent,
+        loadComponent: () => import("./features/auth/components/auth.component").then((m) => m.AuthComponent),
     },
     {
         path: "dashboard",
-        component: DashboardLayoutComponent,
+        loadComponent: () =>
+            import("./infra/layout/dashboard-layout/dashboard-layout.component").then(
+                (m) => m.DashboardLayoutComponent,
+            ),
         canActivate: [authGuard],
         children: [
             {
@@ -32,15 +31,22 @@ export const routes: Routes = [
             },
             {
                 path: "view",
-                component: DashboardComponent,
+                loadComponent: () =>
+                    import("./features/dashboard/dashboard.component").then((m) => m.DashboardComponent),
             },
             {
                 path: "agendamentos",
-                component: AgendamentoScreenComponent,
+                loadComponent: () =>
+                    import("./features/agendamentos/components/agendamento-screen/agendamento-screen.component").then(
+                        (m) => m.AgendamentoScreenComponent,
+                    ),
             },
             {
                 path: "servicos",
-                component: ServicoScreenComponent,
+                loadComponent: () =>
+                    import("./features/servicos/components/servico-screen/servico-screen.component").then(
+                        (m) => m.ServicoScreenComponent,
+                    ),
             },
         ],
     },

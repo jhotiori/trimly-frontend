@@ -17,10 +17,8 @@
         "@angular/core": "^19.2.0",
         "@angular/forms": "^19.2.0",
         "@angular/platform-browser": "^19.2.0",
-        "@angular/platform-browser-dynamic": "^19.2.0",
         "@angular/router": "^19.2.0",
         "@tabler/icons-webfont": "^3.46.0",
-        "chart.js": "^3.1.1",
         "mdb-angular-ui-kit": "^8.0.0",
         "rxjs": "~7.8.0",
         "sweetalert2": "^11.26.25",
@@ -28,7 +26,7 @@
         "zone.js": "~0.15.0"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "^19.2.27",
+        "@angular/build": "~19.2.27",
         "@angular/cli": "^19.2.27",
         "@angular/compiler-cli": "^19.2.0",
         "@biomejs/biome": "^2.5.6",

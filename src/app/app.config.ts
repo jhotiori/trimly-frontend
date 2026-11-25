@@ -4,7 +4,7 @@
 
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { type ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from "@angular/core";
-import { provideAnimations } from "@angular/platform-browser/animations";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { provideRouter } from "@angular/router";
 
 import { routes } from "./app.routes";
@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
         provideHttpClient(withInterceptors([authInterceptor])),
-        provideAnimations(),
+        provideAnimationsAsync(),
         /*
             Instancia o tema no boot. Sem isto ele só seria aplicado ao montar a barra lateral,
             e a tela de login, que não a renderiza, abriria sempre no tema escuro.
