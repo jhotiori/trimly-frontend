@@ -7,5 +7,5 @@
  */
 export const environment = {
     /** URL base da API do backend, sem barra final. */
-    apiUrl: `http://localhost:808`,
+    apiUrl: "http://localhost:8080",
 };
