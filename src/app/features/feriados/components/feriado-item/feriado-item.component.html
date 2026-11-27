@@ -1,0 +1,15 @@
+<article class="app-cartao">
+    <header class="app-cartao__cabecalho">
+        <h3 [title]="feriado.name" class="app-cartao__titulo" >
+            <i aria-hidden="true" class="ti ti-calendar-event"></i>
+            <span class="app-cartao__nome">{{ feriado.name }}</span>
+        </h3>
+    </header>
+
+    <dl class="app-cartao__campos">
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Data do feriado" class="ti ti-calendar" role="img"></i></dt>
+            <dd>{{ formatData(feriado.date) }}</dd>
+        </div>
+    </dl>
+</article>
