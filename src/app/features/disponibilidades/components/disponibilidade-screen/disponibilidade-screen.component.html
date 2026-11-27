@@ -1,0 +1,36 @@
+<section class="app-tela">
+    <header class="app-tela__cabecalho">
+        <h1 class="app-tela__titulo">Disponibilidades</h1>
+        <p class="app-tela__descricao">Consulte as janelas de atendimento da barbearia.</p>
+    </header>
+
+    <search class="app-tela__ferramentas">
+        <div class="app-busca">
+            <i aria-hidden="true" class="ti ti-search"></i>
+            <input
+                [formControl]="busca"
+                aria-label="Pesquisar disponibilidades"
+                class="app-busca__entrada"
+                placeholder="Pesquisar…"
+                type="search" />
+            <select [formControl]="campo" aria-label="Pesquisar por" class="app-busca__filtro">
+                @for (opcao of opcoesBusca; track opcao.campo) {
+                    <option [ngValue]="opcao.campo">{{ opcao.rotulo }}</option>
+                }
+            </select>
+        </div>
+
+        @if (authStore.isGestor()) {
+            <button
+                (click)="openDisponibilidadeForm()"
+                aria-label="Nova disponibilidade"
+                class="app-tela__criar"
+                title="Nova disponibilidade"
+                type="button">
+                <i aria-hidden="true" class="ti ti-calendar-time"></i>
+            </button>
+        }
+    </search>
+
+    <app-disponibilidade-list [disponibilidades]="disponibilidadesFiltradas()" />
+</section>
