@@ -13,6 +13,17 @@ Domain files under `.claude/rules/` load when a matching path is touched; read o
 
 ## Project
 
+## Context
+
+Domain files under `.claude/rules/` load when a matching path is touched; read one directly when a task needs it.
+
+- [**Conventions**](.claude/rules/conventions.md): naming, predicates, file headers, comments, TSDoc, config.
+- [**Client State**](.claude/rules/state.md): stores, `AlertService`, payload and view rules, enum labels.
+- [**Authentication**](.claude/rules/auth.md): `AuthStore`, token interceptor, `401` redirect, guards.
+- [**Styling**](.claude/rules/styling.md): semantic markup, ARIA, design tokens, BEM `app-` classes, MDB theming, fonts, themes.
+
+## Project
+
 Domain language is Portuguese (models, DTOs, stores, component folders);
 framework/technical scaffolding stays English.
 - `Servico` - service
