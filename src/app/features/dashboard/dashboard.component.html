@@ -17,4 +17,18 @@
         </header>
         <app-disponibilidade-list [disponibilidades]="disponibilidades()" />
     </section>
+
+    <section class="app-dashboard__secao">
+        <header class="app-dashboard__cabecalho">
+            <h2 class="app-dashboard__titulo">Recessos</h2>
+        </header>
+        <app-recesso-list [recessos]="recessosAtivos()" />
+    </section>
+
+    <section class="app-dashboard__secao">
+        <header class="app-dashboard__cabecalho">
+            <h2 class="app-dashboard__titulo">Feriados {{ ano }}</h2>
+        </header>
+        <app-feriado-list [feriados]="feriados()" />
+    </section>
 </section>
