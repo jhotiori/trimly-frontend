@@ -1,16 +1,6 @@
 /*
-    Vocabulário semântico compartilhado com o restante da aplicação:
-    - superfície interativa em hover: `--bg-hover`;
-    - navegação ativa: texto em `--accent-hover`;
-    - transições de estado (hover, cor, ícone): `--animation-fast`;
-    - transições de layout, tamanho e largura: `--animation-medium`;
-    - `--animation-instant` fica reservado para retorno de clique ou toque, hoje sem uso.
-*/
-
-/*
-    Moldura suave com cantos direitos arredondados: exceção explícita à regra de borda só em
-    foco ou estado ativo, restrita a este painel. O lado esquerdo fica reto porque encosta na
-    borda da viewport.
+    Painel plano, um degrau acima da página, com cantos direitos arredondados. O lado esquerdo
+    fica reto porque encosta na borda da viewport. O tom é a única costura: nada de moldura.
 */
 
 .app-sidebar {
@@ -19,24 +9,20 @@
     flex-flow: column;
     gap: var(--spacing-3xl);
 
+    /* Presa ao topo da viewport: a página rola por baixo e a navegação fica sempre à mão */
+    position: sticky;
+    top: 0;
+    align-self: start;
+
     width: 15rem;
     height: 100vh;
     padding: var(--spacing-2xl) var(--spacing-xl);
 
-    background: linear-gradient(90deg, var(--bg-surface), transparent);
+    background-color: var(--bg-subtle);
     border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0;
     overflow: hidden;
 
-    transition: width var(--animation-medium);
-}
-
-/*
-    No tema claro o mesmo passo relativo cai perto do topo da escala e some: o degrau seguinte
-    da escada (`--bg-elevated`) devolve a faixa sem sair dos tokens existentes.
-*/
-
-[data-theme="light"] .app-sidebar {
-    background: linear-gradient(90deg, var(--bg-elevated), transparent);
+    transition: width var(--animation-medium), background-color var(--animation-medium);
 }
 
 .app-sidebar--recolhida {
@@ -49,7 +35,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-md) 0 var(--spacing-lg);
 }
 
 /* SVG embutido: o `currentColor` dos traços segue esta cor e acompanha a troca de tema */
@@ -62,13 +48,7 @@
 }
 
 .app-sidebar__logotipo {
-    font-family: var(--font-family-display);
-    font-size: var(--font-size-lg);
-    /* Peso literal: o Playfair Display só é carregado em 600 e 700, e `--font-weight-bold` é 800 */
-    font-weight: 700;
-    letter-spacing: -0.02em;
     color: var(--text-primary);
-    white-space: nowrap;
 }
 
 /* Navegação */
@@ -89,16 +69,14 @@
     align-items: center;
     gap: var(--spacing-md);
 
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
 
     background-color: transparent;
-    border-left: var(--border-width-md) solid transparent;
     border-radius: var(--border-radius-md);
     color: var(--text-tertiary);
     text-align: left;
 
-    transition: background-color var(--animation-fast), border-color var(--animation-fast),
-        color var(--animation-fast);
+    transition: background-color var(--animation-fast), color var(--animation-fast), box-shadow var(--animation-medium);
 
     /*
         Coluna própria e de largura fixa para o ícone: ele se centraliza dentro dela, e não a
@@ -112,16 +90,24 @@
         width: var(--font-size-md);
         font-size: var(--font-size-md);
         line-height: 1;
+        /* Em repouso o ícone fica apagado; acende junto com o texto quando a linha é alcançada */
+        color: var(--text-faint);
         transform: scale(1);
-        transition: transform var(--animation-fast);
+        transition: transform var(--animation-fast), color var(--animation-fast);
     }
 
-    &:hover {
-        background-color: var(--bg-hover);
-        border-left-color: var(--border-hover);
+    /* O desenho do `ti-logout` pesa à esquerda da própria caixa: um ajuste óptico o alinha aos demais */
+    .ti-logout {
+        translate: 0.125rem 0;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bg-surface);
         color: var(--text-primary);
 
         i {
+            color: var(--text-primary);
             transform: scale(1.1);
         }
     }
@@ -133,17 +119,19 @@
 }
 
 /*
-    Rota atual: o acento aparece no texto e na borda esquerda. A borda existe transparente
-    em repouso, então só a cor muda e nenhuma entrada desloca o layout ao ser alcançada.
+    Rota atual: as cores se invertem, com o acento de fundo e a base da página no texto.
+    Sem barra lateral: o preenchimento já diz onde se está, e nada desloca o layout.
 */
 
-.app-sidebar__item--ativo {
-    border-left-color: var(--accent-hover);
-    color: var(--accent-hover);
+.app-sidebar__item--ativo,
+.app-sidebar__item--ativo:hover,
+.app-sidebar__item--ativo:focus-visible {
+    background-color: var(--accent-hover);
+    color: var(--bg-base);
+    box-shadow: var(--shadow-soft);
 
-    &:hover {
-        border-left-color: var(--accent-hover);
-        color: var(--accent-hover);
+    i {
+        color: var(--bg-base);
     }
 }
 
@@ -180,14 +168,20 @@
 }
 
 /*
-    Recolhida: só os ícones permanecem. A linha não se recentra, porque o ícone e o símbolo
-    já ocupam colunas fixas; assim nada se desloca ao recolher ou expandir.
+    Recolhida: só os ícones permanecem, centralizados no trilho. O recuo interno sai, porque
+    sem o rótulo ele empurraria o ícone para fora do centro.
 */
 
-.app-sidebar--recolhida {
+@mixin trilho-de-icones {
     .app-sidebar__logotipo,
     .app-sidebar__rotulo {
         display: none;
+    }
+
+    .app-sidebar__marca,
+    .app-sidebar__item {
+        justify-content: center;
+        padding-inline: 0;
     }
 
     .app-sidebar__alternar {
@@ -195,16 +189,17 @@
     }
 }
 
+.app-sidebar--recolhida {
+    @include trilho-de-icones;
+}
+
 /* Abaixo de 48rem a barra trava como trilho de ícones, independente do sinal de recolhimento */
 
 @media (max-width: 48rem) {
     .app-sidebar {
         width: 4.5rem;
-    }
 
-    .app-sidebar__logotipo,
-    .app-sidebar__rotulo {
-        display: none;
+        @include trilho-de-icones;
     }
 
     .app-sidebar__alternar {

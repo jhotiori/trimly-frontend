@@ -1,0 +1,85 @@
+/* Cabeçalho do modal: título na face de display e um fechar discreto */
+
+.app-recesso-form__titulo {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-tertiary);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.app-recesso-form__fechar {
+    display: grid;
+    place-items: center;
+
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+
+    background-color: transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-faint);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+/* Corpo do formulário */
+
+.app-recesso-form__corpo {
+    display: flex;
+    flex-flow: column;
+    gap: var(--spacing-2xl);
+}
+
+.app-recesso-form__linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+/* Estado de validação do envio */
+
+.app-recesso-form__erro {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    font-size: var(--font-size-xs);
+    color: var(--danger-hover);
+}
+
+/* Ações do rodapé: sem moldura, o preenchimento distingue a ação principal */
+
+.app-recesso-form__acao {
+    font-weight: var(--font-weight-semibold);
+    padding: var(--spacing-md) var(--spacing-2xl);
+
+    background-color: var(--bg-surface);
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+
+    transition: background-color var(--animation-fast), color var(--animation-fast), transform var(--animation-fast);
+
+    &:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(var(--scale-press));
+    }
+}
+
+.app-recesso-form__acao--principal {
+    background-color: var(--accent-base);
+    color: var(--text-on-accent);
+
+    &:hover {
+        background-color: var(--accent-hover);
+    }
+}

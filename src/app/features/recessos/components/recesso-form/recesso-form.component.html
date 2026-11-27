@@ -1,0 +1,68 @@
+<div class="modal-header app-recesso-form__cabecalho">
+    <h2 class="modal-title app-recesso-form__titulo">
+        {{ isEditing ? "Editar Recesso" : "Novo Recesso" }}
+    </h2>
+    <button (click)="close()" aria-label="Fechar" class="app-recesso-form__fechar" type="button">
+        <i aria-hidden="true" class="ti ti-x"></i>
+    </button>
+</div>
+
+<form (ngSubmit)="submit()" [formGroup]="form">
+    <div class="modal-body app-recesso-form__corpo">
+        <mdb-form-control>
+            <input
+                [attr.maxlength]="descricaoMaxLength"
+                [class.is-invalid]="isInvalid('descricao')"
+                class="form-control"
+                formControlName="descricao"
+                id="recesso-descricao"
+                mdbInput
+                type="text" />
+            <label class="form-label" for="recesso-descricao" mdbLabel>Descrição</label>
+        </mdb-form-control>
+
+        <div class="app-recesso-form__linha">
+            <mdb-form-control>
+                <input
+                    [attr.min]="isEditing ? null : dataMinima"
+                    [class.is-invalid]="isInvalid('dataInicio') || (submitted() && isPeriodoInvalido)"
+                    class="form-control"
+                    formControlName="dataInicio"
+                    id="recesso-inicio"
+                    mdbInput
+                    type="date" />
+                <label class="form-label" for="recesso-inicio" mdbLabel>Início</label>
+            </mdb-form-control>
+
+            <mdb-form-control>
+                <input
+                    [attr.min]="isEditing ? null : dataMinima"
+                    [class.is-invalid]="isInvalid('dataFim') || (submitted() && isPeriodoInvalido)"
+                    class="form-control"
+                    formControlName="dataFim"
+                    id="recesso-fim"
+                    mdbInput
+                    type="date" />
+                <label class="form-label" for="recesso-fim" mdbLabel>Fim</label>
+            </mdb-form-control>
+        </div>
+
+        @if (submitted() && form.invalid) {
+            <p class="app-recesso-form__erro" role="alert">
+                <i aria-hidden="true" class="ti ti-alert-triangle"></i>
+                @if (isPeriodoInvalido) {
+                    A data de fim não pode ser anterior à de início.
+                } @else {
+                    Informe uma descrição e datas que não sejam passadas para {{ isEditing ? "salvar" : "cadastrar" }} o recesso.
+                }
+            </p>
+        }
+    </div>
+
+    <div class="modal-footer app-recesso-form__rodape">
+        <button (click)="close()" class="app-recesso-form__acao" type="button">Cancelar</button>
+        <button class="app-recesso-form__acao app-recesso-form__acao--principal" type="submit">
+            {{ isEditing ? "Salvar" : "Cadastrar" }}
+        </button>
+    </div>
+</form>

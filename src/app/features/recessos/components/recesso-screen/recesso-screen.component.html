@@ -1,0 +1,36 @@
+<section class="app-tela">
+    <header class="app-tela__cabecalho">
+        <h1 class="app-tela__titulo">Recessos</h1>
+        <p class="app-tela__descricao">Consulte os períodos em que a barbearia não atende.</p>
+    </header>
+
+    <search class="app-tela__ferramentas">
+        <div class="app-busca">
+            <i aria-hidden="true" class="ti ti-search"></i>
+            <input
+                [formControl]="busca"
+                aria-label="Pesquisar recessos"
+                class="app-busca__entrada"
+                placeholder="Pesquisar…"
+                type="search" />
+            <select [formControl]="campo" aria-label="Pesquisar por" class="app-busca__filtro">
+                @for (opcao of opcoesBusca; track opcao.campo) {
+                    <option [ngValue]="opcao.campo">{{ opcao.rotulo }}</option>
+                }
+            </select>
+        </div>
+
+        @if (authStore.isGestor()) {
+            <button
+                (click)="openRecessoForm()"
+                aria-label="Novo recesso"
+                class="app-tela__criar"
+                title="Novo recesso"
+                type="button">
+                <i aria-hidden="true" class="ti ti-beach"></i>
+            </button>
+        }
+    </search>
+
+    <app-recesso-list [recessos]="recessosFiltrados()" />
+</section>

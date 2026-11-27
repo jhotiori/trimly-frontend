@@ -35,7 +35,33 @@ import { ... } from "...";
 - Exported non-class symbols (interface, enum, function, const) keep a `/** */` TSDoc directly on the symbol.
 - Class members keep their `/** */`. A blank ` *` line goes ONLY between the description and the first tag,
   NEVER between description lines.
-- Inline `//` comments ONLY for genuinely complex or ambiguous logic, concise and direct. No filler.
+- Inline comments (`//`, inline `/* */` in TS and SCSS, `<!-- -->` in templates) ONLY for genuinely complex or
+  ambiguous logic. A comment says why (constraint, trade-off, browser or API quirk), NEVER what; delete one that
+  restates the code. No commented-out code.
+- Wording, for every comment (file header, TSDoc, inline, SCSS): humanized and plain, the way you would explain it
+  to a teammate; clear, concise, direct; one idea per comment, no jargon the code does not already use, no filler.
+
+## Code rules
+
+Apply to new and touched code; do not refactor untouched code for them.
+
+- Guard clauses: guards come first and `return` early; the main path stays unindented. No `else` after `return`; no more
+  than two nesting levels.
+- Immutability: `const` over `let`, `readonly` on fields, `as const` on fixed tables. Signals are replaced, never
+  mutated (`[...list, item]`, never `push`); see [state](state.md).
+- Focused code: component renders and delegates, store holds state, service does HTTP, util is pure. A method does one
+  job; if its name needs "and", extract. Derive with `computed`, never recompute in a template.
+- No magic values: a meaningful literal becomes a constant, an enum or a config entry, following the Config rules
+  above. `0`, `1` and `""` with an obvious meaning stay inline.
+- Fail fast at boundaries: validate in the reactive form (mirroring `BusinessRules`) before the request; type every
+  DTO; no `any` (`unknown` and narrow instead).
+- Errors: type the handler (`catchError((err: HttpErrorResponse) => ...)`); never an empty handler except the silent
+  `load()` documented in [state](state.md); keep the backend message through `extractErrorMessage(err, fallback)`
+  instead of replacing it with a generic one.
+- Dates: a date-only string (`yyyy-MM-dd`) NEVER goes straight into `new Date(...)`: it parses as UTC and shows the
+  previous day in GMT-3. Append `T00:00:00` or split it.
+- No `console.log` in committed code. A subscription that does not complete on its own uses `takeUntilDestroyed`
+  (`HttpClient` calls complete, so they do not need it).
 
 ## TSDoc
 

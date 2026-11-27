@@ -11,7 +11,7 @@
                 [formControl]="busca"
                 aria-label="Pesquisar agendamentos"
                 class="app-busca__entrada"
-                placeholder="Pesquisar..."
+                placeholder="Pesquisar…"
                 type="search" />
             <select [formControl]="campo" aria-label="Pesquisar por" class="app-busca__filtro">
                 @for (opcao of opcoesBusca(); track opcao.campo) {

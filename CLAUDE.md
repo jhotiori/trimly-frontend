@@ -19,6 +19,7 @@ framework/technical scaffolding stays English.
 - `Usuario` - user
 - `Agendamento` - appointment/booking
 - `Disponibilidade` - availability
+- `Feriado` - national holiday (read-only, BrasilAPI via the backend)
 
 ## CodeGraph
 
@@ -69,7 +70,8 @@ region + routed `<router-outlet>`, at `app/infra/layout/dashboard-layout/`, wrap
 singleton app-shell pieces, not reusable components, which is why they sit in `infra/`
 rather than a generic `shared/`.
 
-Feature UIs are split one folder per surface under `app/features/<domain>/components/`:
+Feature UIs are split one folder per surface under `app/features/<domain>/components/`; a domain has only the
+surfaces it uses (`feriados`: list, item only):
 `<domain>-screen/` (routed page under `/dashboard/*`: title, description, a 500ms-debounced
 search that filters the store signal in memory, never the backend, and an in-page create
 action that opens the `<domain>-form` modal), `<domain>-list/` (dumb, takes an `@Input()`

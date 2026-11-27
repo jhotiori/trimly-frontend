@@ -1,0 +1,29 @@
+<article [class.app-cartao--encerrado]="isEncerrado" class="app-cartao">
+    <header class="app-cartao__cabecalho">
+        <h3 [title]="recesso.descricao" class="app-cartao__titulo">
+            <i aria-hidden="true" class="ti ti-beach"></i>
+            <span class="app-cartao__nome">{{ recesso.descricao }}</span>
+        </h3>
+
+        @if (authStore.isGestor()) {
+            <button (click)="edit()" aria-label="Editar recesso" class="app-cartao__acao" type="button">
+                <i aria-hidden="true" class="ti ti-pencil"></i>
+            </button>
+
+            <button
+                (click)="remove()"
+                aria-label="Excluir recesso"
+                class="app-cartao__acao app-cartao__acao--perigo"
+                type="button">
+                <i aria-hidden="true" class="ti ti-trash"></i>
+            </button>
+        }
+    </header>
+
+    <dl class="app-cartao__campos">
+        <div class="app-cartao__campo">
+            <dt><i aria-label="Período do recesso" class="ti ti-calendar" role="img"></i></dt>
+            <dd>{{ formatPeriodo() }}</dd>
+        </div>
+    </dl>
+</article>

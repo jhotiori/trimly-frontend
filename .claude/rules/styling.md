@@ -33,36 +33,59 @@ MDB component theming (modal surface, form notch, validation states) lives in th
 `styles.scss`, not in component SCSS: MDB renders those elements from its own templates,
 so view-encapsulated component styles cannot reach them and `::ng-deep` is not needed.
 
-The Agendamentos, Serviços and Dashboard screens share one vocabulary, defined once in
+The Agendamentos, Serviços, Disponibilidades, Recessos and Dashboard screens share one vocabulary, defined once in
 `styles.scss` because every screen repeats it: `.app-tela` (page column, header, toolbar
 and the accent create button), `.app-busca` (search field), `.app-grade` (4/3/2-column
 card grid with a single `--animation-medium` fade-in on mount), `.app-cartao`
 (`--border-radius-lg` card, icon-labelled `<dl>` fields, round actions) and `.app-vazio`
 (empty state). Items and lists compose these classes instead of restyling cards per
 component; component SCSS keeps only what is truly local (the agendamento client menu).
-Every micro-interaction carries a one-line SCSS comment saying why it exists, and
-`prefers-reduced-motion` drops the fade and the hover scale.
+A card whose title must not grow the row (feriados) wraps the name in `.app-cartao__nome` (one line, ellipsis) so every card in a grid row keeps the same height; never un-stretch the grid to fix a tall card. An already-ended item (a past recesso) adds `.app-cartao--encerrado`, which drops its title to `--text-muted`.
+A micro-interaction gets an SCSS comment only when its reason is not obvious from the code. Hover and press
+read the `--scale-hover` (card), `--lift-hover` (card and accent buttons, `translateY`) and `--scale-press`
+(buttons, `:active:not(:disabled)`) tokens; `prefers-reduced-motion` neutralizes all three on `:root` and drops
+the grid fade, so a component needs its own reduced-motion rule only for motion outside those tokens (the auth
+card entrance and mode-switch blur).
 
-The global reset zeroes every border, and a border only marks focus or the active state
-(the full perimeter border of `.app-busca` and the MDB `.form-outline` fields, the
-sidebar's active edge), kept transparent at rest so nothing shifts. Hover never draws a
-border: it only shifts the background color. The one deliberate exception is the `.app-sidebar` panel itself: a
-`--border-width-xs` `--border-base` frame with only its right corners rounded
-(`--border-radius-lg`), since its left edge sits flush against the viewport. The former
-bordered `agendamento-item` exception is gone; every card is the borderless `.app-cartao`.
+Design conventions:
+- Inactive look: at rest, controls sit one step down (text `--text-tertiary`/`--text-secondary`, icons
+  `--text-faint`) and light up to `--text-primary` on hover, focus or active. Every `.app-cartao` rests at
+  `--opacity-inactive` and lights to full opacity on hover or focus; while one auth field is hovered or focused,
+  its siblings drop to `--opacity-inactive`.
+- Icons over labels: a Tabler icon replaces a written prefix where it reads clearly (card `<dl>` fields, the
+  trailing `.app-campo__icone` in MDB fields, icon-led buttons); the text label stays for accessibility.
+- Clean hierarchy: size, weight and tone carry it; no decoration that does not mark a state.
+- Motion: subtle and smooth, on the `--animation-*` expo-out curve; entrances use `@starting-style`
+  (opacity, a few px of `translate`, at most a light `blur`), never bounce or long travel.
+
+The global reset zeroes every border, and a border only marks focus (the full perimeter border
+of `.app-busca` and the MDB `.form-outline` fields) or a hovered card (`--border-width-xs` in `--border-base`),
+kept transparent at rest so nothing shifts. Hover shifts the background one tone step, and a card also lifts by
+`--lift-hover`/`--scale-hover` and swaps to `--shadow-raised`. Surfaces separate by tone, never by a frame,
+including the `.app-sidebar` panel (flat `--bg-subtle`, right corners `--border-radius-xl`, `position: sticky`
+so it stays put while the page scrolls). A sidebar item hovers to `--bg-surface`; the active route inverts to an
+`--accent-hover` fill with `--bg-base` text and icon, never a side bar. The dashboard shell ends in a
+`.app-rodape` footer (`--bg-surface`, `--text-muted`, tall padding, a two-layer upward shadow in its own `--bg-surface` color that blends it into the page). Its GitHub links are faint (`--text-faint`) compact pills with a `currentColor` border, a trailing `ti-external-link` icon and a `--bg-hover` fill on hover or focus. Two elevations, both offset and softly blurred, never a halo: `--shadow-soft` gives
+slight contrast at rest (cards, accent buttons, the active sidebar item, focused fields and search);
+`--shadow-raised` is for what floats or sits under the cursor (card and accent-button hover, the MDB modal, the
+auth card, the agendamento client menu).
 
 - Fonts load via one `<link>` in `src/index.html`, requesting only the weights in use:
-  Geist 600/800 (`--font-family-display`, h2-h4), Inter 300/400/600/800
-  (`--font-family-interface`), Geist Mono 400 (`--font-family-mono`, the MDB
-  `.form-outline` fields) and Playfair Display 600/700 (`--font-family-serif`, read by the
-  sidebar logotype and nothing else). Add a weight to the `<link>` before using it in SCSS.
+  Geist 300/400/600/700/800 (both `--font-family-display` and `--font-family-interface`; 700 is
+  `.app-logotipo`, the uppercase, `0.24em`-tracked "Trimly" wordmark shared by the sidebar and the auth card,
+  standing in for the original Lemon Milk) and Geist Mono 400 (`--font-family-mono`, the MDB `.form-outline`
+  fields). Add a weight to the `<link>` before using it in SCSS.
 
 ## Themes
 
-Dark is the default and writes nothing to the DOM. Light is a scope, `[data-theme="light"]`
-on `<html>`, that re-declares only the four base tokens `--text-primary`, `--bg-base`,
-`--accent-base` and `--danger-base`; every other color is a `color-mix()` derived from those,
-so the whole palette recomputes with no component-level edit. A new color belongs in that
+Dark is the default and writes nothing to the DOM (`--bg-base` `#0a0a0a`, `--text-primary`
+`#ededed`). Light is a scope, `[data-theme="light"]` on `<html>` (the same element as `:root`),
+that re-declares only `--text-primary` (`#171717`), `--bg-base` (`#fff`) and `--shadow-raised`;
+every other color is a `color-mix()` derived from those, so the whole palette recomputes with no
+component-level edit and no repeated formula. The background ladder climbs in even 3.5% steps (`subtle`,
+`surface`, `elevated`, `hover`, `highlight`) and the text ladder in 12% steps (`secondary`, `tertiary`, `muted`
+at 36%), so a hover is always exactly one step up. `--text-muted` is the lightest step for text
+(placeholders, empty states); `--text-faint` is for icons only. A new color belongs in that
 ladder, never as a literal inside a component.
 
 `ThemeService` (`app/infra/services/theme.service.ts`) is the single owner of the theme: a

@@ -9,6 +9,7 @@
             mdbInput
             type="email" />
         <label class="form-label" for="login-email" mdbLabel>E-mail</label>
+        <i aria-hidden="true" class="ti ti-mail app-campo__icone"></i>
     </mdb-form-control>
 
     <mdb-form-control>
@@ -21,7 +22,10 @@
             mdbInput
             type="password" />
         <label class="form-label" for="login-senha" mdbLabel>Senha</label>
+        <i aria-hidden="true" class="ti ti-lock app-campo__icone"></i>
     </mdb-form-control>
 
-    <button [disabled]="form.invalid" class="app-auth__enviar" type="submit">Entrar</button>
+    <button [disabled]="form.invalid" class="app-auth__enviar" type="submit">
+        Entrar
+    </button>
 </form>

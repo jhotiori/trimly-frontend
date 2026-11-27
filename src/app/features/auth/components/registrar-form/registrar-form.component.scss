@@ -5,10 +5,25 @@
     gap: var(--spacing-2xl);
 }
 
+/* Com um campo em foco, os outros recuam um pouco para o alvo da digitação se destacar */
+
+.app-auth__campos:focus-within mdb-form-control:not(:focus-within) {
+    opacity: var(--opacity-inactive);
+}
+
+mdb-form-control {
+    display: block;
+    transition: opacity var(--animation-medium);
+}
+
 /* Ação principal dos formulários de autenticação, idêntica no login e no registro */
 
 .app-auth__enviar {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
     padding: var(--spacing-lg);
 
     font-size: var(--font-size-md);
@@ -17,10 +32,23 @@
     background-color: var(--accent-surface);
     color: var(--text-on-accent);
     border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-soft);
 
-    transition: background-color var(--animation-fast);
+    transition: background-color var(--animation-fast), transform var(--animation-fast),
+        box-shadow var(--animation-medium), opacity var(--animation-medium);
 
-    &:hover {
+    &:hover:not(:disabled) {
         background-color: var(--accent-hover);
+        transform: translateY(var(--lift-hover));
+        box-shadow: var(--shadow-raised);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(var(--scale-press));
+        box-shadow: var(--shadow-soft);
+    }
+
+    &:disabled {
+        box-shadow: none;
     }
 }

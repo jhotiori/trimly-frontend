@@ -48,6 +48,20 @@ export const routes: Routes = [
                         (m) => m.ServicoScreenComponent,
                     ),
             },
+            {
+                path: "disponibilidades",
+                loadComponent: () =>
+                    import(
+                        "./features/disponibilidades/components/disponibilidade-screen/disponibilidade-screen.component"
+                    ).then((m) => m.DisponibilidadeScreenComponent),
+            },
+            {
+                path: "recessos",
+                loadComponent: () =>
+                    import("./features/recessos/components/recesso-screen/recesso-screen.component").then(
+                        (m) => m.RecessoScreenComponent,
+                    ),
+            },
         ],
     },
 ];

@@ -32,5 +32,7 @@ export const Endpoints = {
     USUARIOS_URL: ENDPOINT(BASE_URL, "api", "usuarios"),
     SERVICOS_URL: ENDPOINT(BASE_URL, "api", "servicos"),
     DISPONIBILIDADES_URL: ENDPOINT(BASE_URL, "api", "disponibilidades"),
+    RECESSOS_URL: ENDPOINT(BASE_URL, "api", "recessos"),
+    FERIADOS_URL: ENDPOINT(BASE_URL, "api", "feriados"),
     AUTHENTICATION_URL: ENDPOINT(BASE_URL, "api", "auth"),
 };
