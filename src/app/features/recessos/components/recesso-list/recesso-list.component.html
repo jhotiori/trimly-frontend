@@ -1,0 +1,14 @@
+@if (recessos.length > 0) {
+    <ul class="app-grade">
+        @for (recesso of recessos; track recesso.id) {
+            <li>
+                <app-recesso-item [recesso]="recesso" />
+            </li>
+        }
+    </ul>
+} @else {
+    <p class="app-vazio">
+        <i aria-hidden="true" class="ti ti-beach"></i>
+        Nenhum recesso cadastrado ainda.
+    </p>
+}
