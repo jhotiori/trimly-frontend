@@ -13,23 +13,13 @@ Domain files under `.claude/rules/` load when a matching path is touched; read o
 
 ## Project
 
-## Context
-
-Domain files under `.claude/rules/` load when a matching path is touched; read one directly when a task needs it.
-
-- [**Conventions**](.claude/rules/conventions.md): naming, predicates, file headers, comments, TSDoc, config.
-- [**Client State**](.claude/rules/state.md): stores, `AlertService`, payload and view rules, enum labels.
-- [**Authentication**](.claude/rules/auth.md): `AuthStore`, token interceptor, `401` redirect, guards.
-- [**Styling**](.claude/rules/styling.md): semantic markup, ARIA, design tokens, BEM `app-` classes, MDB theming, fonts, themes.
-
-## Project
-
 Domain language is Portuguese (models, DTOs, stores, component folders);
 framework/technical scaffolding stays English.
 - `Servico` - service
 - `Usuario` - user
 - `Agendamento` - appointment/booking
 - `Disponibilidade` - availability
+- `Feriado` - national holiday (read-only, BrasilAPI via the backend)
 
 ## CodeGraph
 
@@ -80,7 +70,8 @@ region + routed `<router-outlet>`, at `app/infra/layout/dashboard-layout/`, wrap
 singleton app-shell pieces, not reusable components, which is why they sit in `infra/`
 rather than a generic `shared/`.
 
-Feature UIs are split one folder per surface under `app/features/<domain>/components/`:
+Feature UIs are split one folder per surface under `app/features/<domain>/components/`; a domain has only the
+surfaces it uses (`feriados`: list, item only):
 `<domain>-screen/` (routed page under `/dashboard/*`: title, description, a 500ms-debounced
 search that filters the store signal in memory, never the backend, and an in-page create
 action that opens the `<domain>-form` modal), `<domain>-list/` (dumb, takes an `@Input()`

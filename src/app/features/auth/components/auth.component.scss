@@ -9,47 +9,58 @@
     padding: var(--spacing-xl);
 }
 
+/* O cartão entra subindo de leve; depois disso só o conteúdo dele se move */
+
 .app-auth__cartao {
     width: 100%;
     max-width: 24rem;
 
     background-color: var(--bg-surface);
     border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-raised);
     padding: var(--spacing-3xl);
 
     display: grid;
     gap: var(--spacing-2xl);
+
+    transition: opacity var(--animation-slow), translate var(--animation-slow);
+
+    @starting-style {
+        opacity: var(--opacity-hidden);
+        translate: 0 var(--spacing-md);
+    }
 }
 
-/* Título: `h1` da página no visual do `h2` global, um degrau menor e com folga extra antes do formulário */
+.app-auth__cabecalho {
+    display: grid;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+}
 
 .app-auth__titulo {
     font-family: var(--font-family-display);
     font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: -0.025em;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.03em;
     line-height: 1.15;
-    margin-bottom: var(--spacing-md);
 }
 
-/* Troca de modo: apenas opacidade, sem deslizar nem mudar de altura */
-
-.app-auth__formulario {
-    transition: opacity var(--animation-medium);
-}
+/* Troca de modo: o formulário novo surge do desfoque, sem mudar a altura de uma vez */
 
 .app-auth__formulario app-login-form,
 .app-auth__formulario app-registrar-form {
     display: block;
     opacity: var(--opacity-visible);
-    transition: opacity var(--animation-medium);
+    filter: blur(0);
+    translate: 0 0;
+    transition: opacity var(--animation-medium), filter var(--animation-medium), translate var(--animation-medium);
 
     @starting-style {
         opacity: var(--opacity-hidden);
+        filter: blur(0.25rem);
+        translate: 0 var(--spacing-sm);
     }
 }
-
-/* Linha de alternância: texto discreto com a ação em acento */
 
 .app-auth__alternar {
     font-family: var(--font-family-interface);
@@ -57,6 +68,10 @@
     color: var(--text-muted);
 
     button {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+
         background: none;
         color: var(--accent-hover);
         font-weight: var(--font-weight-semibold);
@@ -64,10 +79,32 @@
 
         transition: color var(--animation-fast);
 
+        i {
+            transition: translate var(--animation-fast);
+        }
+
+        /* A seta avança junto com o cursor, apontando para a outra tela */
         &:hover {
             color: var(--text-primary);
-            text-decoration: underline;
-            text-underline-offset: 0.2em;
+
+            i {
+                translate: var(--spacing-xs) 0;
+            }
         }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-auth__cartao,
+    .app-auth__formulario app-login-form,
+    .app-auth__formulario app-registrar-form {
+        @starting-style {
+            filter: none;
+            translate: 0 0;
+        }
+    }
+
+    .app-auth__alternar button:hover i {
+        translate: 0 0;
     }
 }

@@ -6,13 +6,12 @@
 
 :root {
     /*
-        Famílias tipográficas: display (Geist) nos títulos h2-h4, interface (Inter) no texto
-        corrido e na UI, mono (Geist Mono) nos campos dos formulários do MDB.
+        Famílias tipográficas: Geist em toda a interface (display e texto corrido compartilham
+        a face, só o token muda de papel) e Geist Mono nos campos dos formulários do MDB.
     */
-    --font-family-display: "Geist", "Inter", sans-serif;
-    --font-family-interface: "Inter", "Segoe UI", sans-serif;
+    --font-family-display: "Geist", "Segoe UI", sans-serif;
+    --font-family-interface: "Geist", "Segoe UI", sans-serif;
     --font-family-mono: "Geist Mono", "SFMono-Regular", Consolas, monospace;
-    --font-family-serif: "Playfair Display", "Georgia", serif;
 
     /* Pesos tipográficos */
     --font-weight-bold: 800;
@@ -41,13 +40,27 @@
     --animation-medium: var(--animation-ease-style) var(--animation-duration-medium);
     --animation-slow: var(--animation-ease-style) var(--animation-duration-slow);
 
-    /* Texto */
-    --text-primary: hsl(0 0 90%);
-    --text-secondary: color-mix(in srgb, var(--text-primary), var(--bg-base) 15%);
-    --text-tertiary: color-mix(in srgb, var(--text-primary), var(--bg-base) 30%);
+    /* Escalas e deslocamentos de interação: o movimento reduzido os neutraliza aqui, num lugar só */
+    --scale-hover: 1.01;
+    --scale-press: 0.97;
+    --lift-hover: -0.0625rem;
 
-    --text-muted: color-mix(in srgb, var(--text-primary), var(--bg-base) 45%);
-    --text-faint: color-mix(in srgb, var(--text-primary), var(--bg-base) 60%);
+    /*
+        Duas elevações, ambas com deslocamento e desfoque suave, nunca halo. `soft` dá um leve
+        contraste em repouso; `raised` fica para o que flutua ou está sob o cursor. No escuro a
+        sombra é mais densa, porque o fundo já é quase preto.
+    */
+    --shadow-soft: 0 0.0625rem 0.1875rem hsl(0 0 0% / 0.45), 0 0.25rem 0.75rem hsl(0 0 0% / 0.3);
+    --shadow-raised: 0 0.125rem 0.25rem hsl(0 0 0% / 0.5), 0 0.75rem 2rem -0.25rem hsl(0 0 0% / 0.65);
+
+    /* Texto: degraus de 12%, para cada papel se distinguir do vizinho sem saltos */
+    --text-primary: hsl(0 0 93%);
+    --text-secondary: color-mix(in srgb, var(--text-primary), var(--bg-base) 12%);
+    --text-tertiary: color-mix(in srgb, var(--text-primary), var(--bg-base) 24%);
+
+    /* `muted` ainda passa 4.5:1 para texto; `faint` só para ícones e traços (3:1) */
+    --text-muted: color-mix(in srgb, var(--text-primary), var(--bg-base) 36%);
+    --text-faint: color-mix(in srgb, var(--text-primary), var(--bg-base) 50%);
 
     /* Acento */
     --accent-base: hsl(0 60% 40%);
@@ -62,14 +75,16 @@
     --danger-hover: color-mix(in srgb, var(--danger-base), var(--text-primary) 20%);
     --danger-surface: color-mix(in srgb, var(--danger-base), var(--bg-base) 72%);
 
-    /* Fundo */
-    --bg-base: hsl(0 0 0%);
-    --bg-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 17%);
-    --bg-highlight: color-mix(in srgb, var(--bg-base), var(--text-primary) 23%);
-
-    --bg-subtle: color-mix(in srgb, var(--bg-base), var(--text-primary) 5%);
-    --bg-surface: color-mix(in srgb, var(--bg-base), var(--text-primary) 8%);
-    --bg-elevated: color-mix(in srgb, var(--bg-base), var(--text-primary) 11%);
+    /*
+        Fundo: degraus iguais de 3.5%, da página ao destaque, para as superfícies se separarem
+        por tom e o hover sempre subir exatamente um degrau.
+    */
+    --bg-base: hsl(0 0 4%);
+    --bg-subtle: color-mix(in srgb, var(--bg-base), var(--text-primary) 3.5%);
+    --bg-surface: color-mix(in srgb, var(--bg-base), var(--text-primary) 7%);
+    --bg-elevated: color-mix(in srgb, var(--bg-base), var(--text-primary) 10.5%);
+    --bg-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 14%);
+    --bg-highlight: color-mix(in srgb, var(--bg-base), var(--text-primary) 17.5%);
 
     /* Bordas */
     --border-base: color-mix(in srgb, var(--bg-base), var(--text-primary) 20%);
@@ -91,8 +106,8 @@
     --border-width-lg: 0.5rem;
 
     --border-radius-sm: 0.125rem;
-    --border-radius-md: 0.25rem;
-    --border-radius-lg: 0.5rem;
+    --border-radius-md: 0.375rem;
+    --border-radius-lg: 0.75rem;
     --border-radius-xl: 1rem;
     --border-radius-full: 999rem;
 
@@ -104,45 +119,21 @@
 }
 
 /*
-    Tema claro: só os tokens de base mudam de valor. Os derivados são repetidos com a mesma
-    fórmula `color-mix()`, para a escada de contraste do tema claro espelhar a do escuro.
+    Tema claro: só os tokens de base mudam de valor. `[data-theme]` fica no `<html>`, o mesmo
+    elemento do `:root`, então cada derivado `color-mix()` recalcula sozinho e a escada de
+    contraste do tema claro espelha a do escuro sem repetir fórmula.
 */
 
 [data-theme="light"] {
     /* Tema claro nativo: barras de rolagem, seletores e campos do navegador acompanham */
     color-scheme: light;
 
-    /* Texto */
-    --text-primary: hsl(0 0 10%);
-    --text-secondary: color-mix(in srgb, var(--text-primary), var(--bg-base) 15%);
-    --text-tertiary: color-mix(in srgb, var(--text-primary), var(--bg-base) 30%);
+    --text-primary: hsl(0 0 9%);
+    --bg-base: hsl(0 0 100%);
 
-    --text-muted: color-mix(in srgb, var(--text-primary), var(--bg-base) 45%);
-    --text-faint: color-mix(in srgb, var(--text-primary), var(--bg-base) 60%);
-
-    /* Acento */
-    --accent-base: hsl(0 60% 40%);
-    --accent-surface: color-mix(in srgb, var(--accent-base), var(--text-primary) 8%);
-    --accent-elevated: color-mix(in srgb, var(--accent-base), var(--text-primary) 16%);
-    --accent-hover: color-mix(in srgb, var(--accent-base), var(--text-primary) 24%);
-
-    /* Ações destrutivas */
-    --danger-base: hsl(356 34% 38%);
-    --danger-hover: color-mix(in srgb, var(--danger-base), var(--text-primary) 20%);
-    --danger-surface: color-mix(in srgb, var(--danger-base), var(--bg-base) 72%);
-
-    /* Fundo */
-    --bg-base: hsl(0 0 90%);
-    --bg-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 17%);
-    --bg-highlight: color-mix(in srgb, var(--bg-base), var(--text-primary) 23%);
-
-    --bg-subtle: color-mix(in srgb, var(--bg-base), var(--text-primary) 5%);
-    --bg-surface: color-mix(in srgb, var(--bg-base), var(--text-primary) 8%);
-    --bg-elevated: color-mix(in srgb, var(--bg-base), var(--text-primary) 11%);
-
-    /* Bordas */
-    --border-base: color-mix(in srgb, var(--bg-base), var(--text-primary) 20%);
-    --border-hover: color-mix(in srgb, var(--bg-base), var(--text-primary) 30%);
+    /* Sombras mais leves: sobre o branco, pouca densidade já basta para marcar a elevação */
+    --shadow-soft: 0 0.0625rem 0.1875rem hsl(0 0 0% / 0.08), 0 0.25rem 0.75rem hsl(0 0 0% / 0.07);
+    --shadow-raised: 0 0.125rem 0.25rem hsl(0 0 0% / 0.08), 0 0.75rem 2rem -0.25rem hsl(0 0 0% / 0.18);
 }
 
 /* Padrões globais de elementos */
@@ -196,6 +187,22 @@ body {
 
 html {
     color-scheme: dark;
+    /* Barra de rolagem fina no tom das superfícies, em vez do cinza padrão do sistema */
+    scrollbar-color: var(--bg-highlight) transparent;
+    scrollbar-width: thin;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Seleção e cursor de texto também falam a língua do acento */
+
+::selection {
+    background-color: var(--accent-surface);
+    color: var(--text-on-accent);
+}
+
+input,
+textarea {
+    caret-color: var(--accent-hover);
 }
 
 h1,
@@ -264,7 +271,7 @@ svg {
 }
 
 /*
-    Títulos: h2-h4 na face de display (Geist); h1, h5-h6 e parágrafo na de interface (Inter).
+    Títulos: todos em Geist, semibold, sem peso extra; a hierarquia vem do tamanho e da cor.
     O tracking negativo aperta conforme o tamanho cresce, como pede uma sem serifa de display,
     e a quebra equilibrada evita títulos com uma palavra órfã na última linha.
 */
@@ -347,11 +354,13 @@ p {
     a superfície e as divisórias do modal são zeradas aqui explicitamente.
 */
 
+/* O modal flutua sobre a página: a sombra de elevação é a única que ele recebe */
+
 .modal-content {
     background-color: var(--bg-surface);
     border-radius: var(--border-radius-lg);
     color: var(--text-primary);
-    box-shadow: none;
+    box-shadow: var(--shadow-raised);
 }
 
 .modal-header,
@@ -404,10 +413,9 @@ p {
     color: var(--text-on-accent);
 }
 
-/* Texto descritivo do diálogo: mesmo par itálico + `--text-muted` de `.app-tela__descricao` */
+/* Texto descritivo do diálogo: mesmo `--text-muted` de `.app-tela__descricao` */
 
 .app-alert__texto {
-    font-style: italic;
     color: var(--text-muted);
 }
 
@@ -422,16 +430,17 @@ p {
 
 .form-outline .form-control {
     background-color: var(--bg-subtle);
-    color: var(--text-primary);
+    /* Em repouso o valor fica um tom abaixo; o campo só acende ao ser alcançado */
+    color: var(--text-secondary);
     font-family: var(--font-family-mono);
 
     border: var(--border-width-sm) solid transparent;
     border-radius: var(--border-radius-md);
     padding: var(--spacing-lg) var(--spacing-xl);
 
-    transition: background-color var(--animation-fast), border-color var(--animation-fast);
+    transition: background-color var(--animation-fast), border-color var(--animation-fast),
+        color var(--animation-fast), box-shadow var(--animation-medium);
 
-    /* Hover só clareia o fundo; a moldura fica reservada ao foco */
     &:hover,
     &:focus {
         background-color: var(--bg-surface);
@@ -440,7 +449,7 @@ p {
 
     &:focus {
         outline: none;
-        box-shadow: none;
+        box-shadow: var(--shadow-soft);
         border-color: var(--accent-hover);
     }
 
@@ -480,7 +489,53 @@ p {
     color: var(--danger-hover);
 }
 
+/*
+    Ícone à direita do campo, no lugar de um rótulo extra. Ele não recebe clique, então tocar
+    nele ainda foca a entrada; o recuo do campo garante que o texto nunca passe por baixo.
+*/
+
+.form-outline:has(.app-campo__icone) .form-control {
+    padding-right: calc(var(--spacing-xl) * 2 + var(--font-size-sm));
+}
+
+.form-outline .app-campo__icone {
+    position: absolute;
+    top: 50%;
+    right: var(--spacing-xl);
+    translate: 0 -50%;
+    pointer-events: none;
+
+    font-size: var(--font-size-sm);
+    color: var(--text-faint);
+
+    transition: color var(--animation-fast);
+}
+
+.form-outline .form-control:focus~.app-campo__icone {
+    color: var(--accent-hover);
+}
+
+.form-outline .form-control.is-invalid~.app-campo__icone {
+    color: var(--danger-hover);
+}
+
 /* Utilitários compartilhados */
+
+/*
+    Logotipo em caixa alta e espaçado, ecoando a Lemon Milk original com a Geist já carregada.
+    A margem negativa devolve o espaço que o tracking deixa depois da última letra.
+*/
+
+.app-logotipo {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    margin-right: -0.24em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
 
 .app-btn {
     font-size: var(--font-size-md);
@@ -489,11 +544,15 @@ p {
     border-radius: var(--border-radius-md);
     color: var(--text-tertiary);
     padding: var(--spacing-xs) var(--spacing-lg);
-    transition: background-color var(--animation-fast), color var(--animation-fast);
+    transition: background-color var(--animation-fast), color var(--animation-fast), transform var(--animation-fast);
 
     &:hover {
         background-color: var(--bg-hover);
         color: var(--text-primary);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(var(--scale-press));
     }
 }
 
@@ -520,11 +579,11 @@ p {
 .app-tela__titulo {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
+    letter-spacing: -0.03em;
     line-height: 1.2;
 }
 
 .app-tela__descricao {
-    font-style: italic;
     color: var(--text-muted);
 }
 
@@ -548,16 +607,24 @@ p {
     background-color: var(--accent-surface);
     border-radius: var(--border-radius-md);
     color: var(--text-on-accent);
+    box-shadow: var(--shadow-soft);
 
-    transition: background-color var(--animation-fast);
+    transition: background-color var(--animation-fast), transform var(--animation-fast),
+        box-shadow var(--animation-medium);
 
     i {
         font-size: var(--font-size-md);
     }
 
-    /* Hover clareia o acento, o mesmo retorno da ação principal dos formulários */
     &:hover {
         background-color: var(--accent-hover);
+        transform: translateY(var(--lift-hover));
+        box-shadow: var(--shadow-raised);
+    }
+
+    &:active {
+        transform: scale(var(--scale-press));
+        box-shadow: var(--shadow-soft);
     }
 }
 
@@ -568,6 +635,8 @@ p {
 
 .app-busca {
     flex: 1 1 auto;
+    /* Sem isto o item flex não encolhe abaixo do conteúdo e empurra a ação de criar para fora no celular */
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -581,7 +650,6 @@ p {
 
     transition: background-color var(--animation-fast), border-color var(--animation-fast);
 
-    /* Hover clareia o fundo para indicar que a barra aceita digitação */
     &:hover {
         background-color: var(--bg-surface);
     }
@@ -589,6 +657,8 @@ p {
     &:focus-within {
         background-color: var(--bg-surface);
         border-color: var(--accent-hover);
+        box-shadow: var(--shadow-soft);
+        color: var(--accent-hover);
     }
 }
 
@@ -599,18 +669,21 @@ p {
     background-color: transparent;
     color: var(--text-primary);
 
+    /* `muted`, não `faint`: o placeholder é texto e precisa de 4.5:1 */
     &::placeholder {
-        color: var(--text-faint);
+        color: var(--text-muted);
     }
 
-    /* O sublinhado da barra já sinaliza o foco; o contorno global repetiria o aviso */
+    /* A moldura da barra já sinaliza o foco; o contorno global repetiria o aviso */
     &:focus-visible {
         outline: none;
     }
 }
 
 .app-busca__filtro {
-    flex: none;
+    /* Encolhe junto com a entrada no celular, em vez de esmagá-la */
+    flex: 0 1 auto;
+    min-width: 0;
     padding: 0 var(--spacing-md);
 
     background-color: transparent;
@@ -620,7 +693,6 @@ p {
 
     transition: color var(--animation-fast);
 
-    /* Hover acende o texto para mostrar que o campo da busca pode ser trocado */
     &:hover {
         color: var(--text-primary);
     }
@@ -671,48 +743,59 @@ p {
     }
 }
 
+@media (max-width: 36rem) {
+    .app-grade {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 /*
-    Cartão quadrado e sem moldura: o raio `lg` o separa das pílulas `full`, e o fundo é a
-    única costura contra a página.
+    Cartão sem moldura em repouso: o raio `lg` o separa das pílulas `full`, e o fundo é a
+    única costura contra a página. A borda existe transparente e só aparece no hover, sem
+    deslocar nada.
 */
 
 .app-cartao {
     display: flex;
     flex-flow: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl);
 
     height: 100%;
     padding: var(--spacing-xl);
 
     background-color: var(--bg-surface);
+    border: var(--border-width-xs) solid transparent;
     border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-soft);
+    /* Todos os cartões repousam apagados; só o alcançado acende por inteiro */
     opacity: var(--opacity-inactive);
 
-    transition: background-color var(--animation-fast), transform var(--animation-fast), opacity var(--animation-fast);
+    /* Mais lento que o hover dos botões: a superfície maior pede um movimento mais calmo */
+    transition: background-color var(--animation-medium), border-color var(--animation-medium),
+        transform var(--animation-medium), box-shadow var(--animation-medium), opacity var(--animation-medium);
 
-    /* Hover: leve aumento, clareamento do fundo e uma sombra mínima, só para marcar o cartão sob o ponteiro */
-    &:hover {
+    &:hover,
+    &:focus-within {
         background-color: var(--bg-elevated);
-        transform: scale(1.02);
+        border-color: var(--border-base);
         opacity: var(--opacity-visible);
+        transform: translateY(var(--lift-hover)) scale(var(--scale-hover));
+        box-shadow: var(--shadow-raised);
     }
 }
 
-/* No tema claro a sombra vem do texto: a do fundo seria branca sobre branco, ou seja, nenhuma */
-
-[data-theme="light"] .app-cartao:hover {
-    box-shadow: 0 var(--spacing-xs) var(--spacing-lg) color-mix(in srgb, var(--text-primary), transparent 85%);
-}
+/* Título à esquerda e ações agrupadas à direita, alinhadas pela primeira linha do título */
 
 .app-cartao__cabecalho {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing-xs);
 }
 
 .app-cartao__titulo {
     flex: 1 1 auto;
     min-width: 0;
+    padding-right: var(--spacing-md);
 
     display: flex;
     align-items: center;
@@ -725,23 +808,41 @@ p {
     overflow-wrap: anywhere;
 
     i {
+        flex: none;
         color: var(--text-muted);
     }
 }
 
+/* Título de uma linha só: o nome longo corta com reticências e todos os cartões da linha ficam com a mesma altura */
+
+.app-cartao__nome {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* Metadados com ícone no lugar do rótulo escrito: o ícone do `dt` carrega o nome acessível */
+
+/* Item já encerrado: título um degrau abaixo, sem tirar o cartão da grade */
+
+.app-cartao--encerrado .app-cartao__titulo {
+    color: var(--text-muted);
+}
+
+/* Os campos descem para o pé do cartão, então cartões da mesma linha alinham os metadados */
 
 .app-cartao__campos {
     display: flex;
     flex-flow: column;
-    gap: var(--spacing-sm);
-    margin: 0;
+    gap: var(--spacing-md);
+    margin: auto 0 0;
 }
 
 .app-cartao__campo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
     min-width: 0;
 
     font-size: var(--font-size-xs);
@@ -787,7 +888,6 @@ p {
         transition: transform var(--animation-fast);
     }
 
-    /* Hover e foco preenchem o círculo e aumentam o ícone, confirmando o alvo do clique */
     &:hover,
     &:focus-visible {
         background-color: var(--bg-hover);
@@ -818,22 +918,25 @@ p {
 
     background-color: var(--bg-subtle);
     border-radius: var(--border-radius-lg);
-    color: var(--text-faint);
+    color: var(--text-muted);
 
     i {
         font-size: var(--font-size-lg);
+        color: var(--text-faint);
     }
 }
 
-/* Movimento reduzido: a grade surge sem fade e os cartões não crescem no hover */
+/* Movimento reduzido: a grade surge sem fade e nada cresce, encolhe nem sobe */
 
 @media (prefers-reduced-motion: reduce) {
-    .app-grade {
-        animation: none;
+    :root {
+        --scale-hover: 1;
+        --scale-press: 1;
+        --lift-hover: 0;
     }
 
-    .app-cartao:hover {
-        transform: none;
+    .app-grade {
+        animation: none;
     }
 }
 

@@ -23,6 +23,8 @@
 
     background-color: var(--bg-hover);
     border-radius: var(--border-radius-md);
+    /* O menu flutua sobre o cartão: a sombra de elevação o separa sem moldura */
+    box-shadow: var(--shadow-raised);
 }
 
 .app-agendamento-item__opcao {
@@ -38,7 +40,6 @@
 
     transition: background-color var(--animation-fast), color var(--animation-fast);
 
-    /* Hover e foco realçam a opção sob o ponteiro ou o teclado antes do clique */
     &:hover,
     &:focus-visible {
         background-color: var(--bg-highlight);

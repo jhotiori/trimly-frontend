@@ -8,29 +8,99 @@
     grid-template-columns: auto 1fr;
     min-height: 100vh;
 
-    /* Gradiente entre os dois tons mais escuros: profundidade sem virar faixa visível */
-    background: linear-gradient(var(--bg-base), var(--bg-surface));
+    /* Fundo plano: a página é a base, e só as superfícies sobem de tom */
+    background-color: var(--bg-base);
+}
+
+/* A coluna ocupa a viewport inteira, então o rodapé encosta no fim mesmo com pouco conteúdo */
+
+.app-dashboard-layout__coluna {
+    min-width: 0;
+    display: flex;
+    flex-flow: column;
+}
+
+/* Respiro vertical amplo e calhas laterais iguais: a coluna da tela já se centraliza sozinha */
+
+.app-dashboard-layout__conteudo {
+    flex: 1 1 auto;
+    padding: var(--spacing-4xl) var(--spacing-3xl);
 }
 
 /*
-    No tema claro o mesmo passo relativo cai perto do topo da escala e some: o degrau seguinte
-    da escada (`--bg-elevated`) devolve a faixa sem sair dos tokens existentes.
+    Rodapé dois degraus acima da página. A sombra larga e suave, da cor dele, o funde ao conteúdo.
 */
 
-[data-theme="light"] .app-dashboard-layout {
-    background: linear-gradient(var(--bg-base), var(--bg-elevated));
+.app-rodape {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: var(--spacing-2xl);
+
+    padding: var(--spacing-4xl) var(--spacing-3xl);
+
+    background-color: var(--bg-surface);
+    box-shadow: 0 -1.5rem 3rem 0 var(--bg-surface);
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    text-align: center;
 }
 
-/* Respiro vertical amplo e calha menor à esquerda, junto à borda da barra lateral */
+.app-rodape__marca {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: var(--text-tertiary);
+}
 
-.app-dashboard-layout__conteudo {
-    min-width: 0;
-    overflow-y: auto;
-    padding: var(--spacing-4xl) var(--spacing-3xl) var(--spacing-4xl) var(--spacing-xl);
+/* Máscara em vez de `<img>`: o símbolo pinta com `currentColor` e acompanha a troca de tema */
+
+.app-rodape__simbolo {
+    width: var(--font-size-sm);
+    height: var(--font-size-sm);
+    background-color: currentColor;
+    mask: url("/icons/scissor.svg") center / contain no-repeat;
+}
+
+.app-rodape__texto {
+    max-width: 40rem;
+    font-size: inherit;
+    color: inherit;
+}
+
+.app-rodape__links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    font-size: inherit;
+    color: inherit;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-lg);
+
+        background-color: transparent;
+        border: var(--border-width-xs) solid currentColor;
+        border-radius: var(--border-radius-full);
+        color: var(--text-faint);
+        transition: background-color var(--animation-fast), color var(--animation-fast);
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+    }
 }
 
 @media (max-width: 48rem) {
     .app-dashboard-layout__conteudo {
+        padding: var(--spacing-xl);
+    }
+
+    .app-rodape {
         padding: var(--spacing-xl);
     }
 }

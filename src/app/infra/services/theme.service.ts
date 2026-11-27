@@ -15,7 +15,7 @@ export type Tema = "dark" | "light";
 
 /** Cor da barra do navegador em cada tema, espelhando o `--bg-base` correspondente. */
 const COR_BARRA: Record<Tema, string> = {
-    dark: "#000000",
+    dark: "#0a0a0a",
     light: "#ffffff",
 };
 

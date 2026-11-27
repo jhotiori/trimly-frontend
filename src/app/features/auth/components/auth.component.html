@@ -1,5 +1,7 @@
 <main class="app-auth__cartao">
-    <h1 class="app-auth__titulo">{{ mode() === "login" ? "Login" : "Registrar" }}</h1>
+    <header class="app-auth__cabecalho">
+        <h1 class="app-auth__titulo">{{ mode() === "login" ? "Login" : "Registrar" }}</h1>
+    </header>
 
     <div class="app-auth__formulario">
         @if (mode() === "login") {
@@ -12,12 +14,18 @@
     @if (mode() === "login") {
         <p class="app-auth__alternar">
             Não tem uma conta?
-            <button (click)="toggle()" type="button">Registre-se</button>
+            <button (click)="toggle()" type="button">
+                Registre-se
+                <i aria-hidden="true" class="ti ti-arrow-right"></i>
+            </button>
         </p>
     } @else {
         <p class="app-auth__alternar">
-            Já possuí uma conta?
-            <button (click)="toggle()" type="button">Faça o login.</button>
+            Já possui uma conta?
+            <button (click)="toggle()" type="button">
+                Faça o login
+                <i aria-hidden="true" class="ti ti-arrow-right"></i>
+            </button>
         </p>
     }
 </main>
